@@ -8,21 +8,21 @@
  * any later version.
  */
 
-import type { Timeline } from './timeline';
 import type { Point } from './point';
+import type { Timeline } from './timeline';
 
 export class Frame {
-  time: number;
-  number: number;
-  timeline: Timeline;
-  uid: string;
-  points: Point[];
+	time: number;
+	number: number;
+	timeline: Timeline;
+	uid: string;
+	points: Point[];
 
-  constructor(timeline: Timeline, time: number, number: number) {
-    this.time = time;
-    this.number = number;
-    this.timeline = timeline;
-    this.uid = (Math.round(Math.random() * 100000) + 1).toString();
-    this.points = [];
-  }
+	constructor(timeline: Timeline, time: number, number: number) {
+		this.time = time;
+		this.number = number;
+		this.timeline = timeline;
+		this.uid = (Math.round(Math.random() * 100000) + 1).toString();
+		this.points = [];
+	}
 }

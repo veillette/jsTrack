@@ -19,7 +19,7 @@ npm run dev
 npm run build
 ```
 
-The build compiles TypeScript from `ts/` and bundles into `dist/bundle.js` via Webpack.
+The build compiles TypeScript from `ts/` and bundles into `dist/bundle.iife.js` via Vite.
 
 ## Running the Application
 
@@ -29,7 +29,7 @@ Open `index.html` directly in a browser. No server is required unless using Goog
 
 ### Tech Stack
 
-- **TypeScript** (strict mode) compiled with Webpack + ts-loader
+- **TypeScript** (strict mode) compiled with Vite
 - **CreateJS (EaselJS)** for canvas rendering
 - **Handsontable** for data tables
 - **math.js** for unit conversion
@@ -43,7 +43,7 @@ Open `index.html` directly in a browser. No server is required unless using Goog
   - `ts/index.ts` — Main render loop and canvas drawing
   - `ts/functions.ts` — Utility functions
 - `src/` — Vendored external JS libraries and CSS
-- `dist/` — Build output (`bundle.js`)
+- `dist/` — Build output (`bundle.iife.js`)
 - `index.html` — Main HTML entry point
 
 ### Key Patterns
@@ -77,8 +77,22 @@ Project
 - Path alias: `@/*` maps to `ts/*`
 - Source maps enabled
 
+## Linting & Formatting
+
+[Biome](https://biomejs.dev/) is used for linting and formatting. Configuration is in `biome.json`.
+
+```bash
+# Check for lint and format issues
+npm run lint
+
+# Auto-fix lint and format issues
+npm run lint:fix
+
+# Format only
+npm run format
+```
+
 ## Notes
 
-- There are no test or lint scripts configured.
-- The `dist/bundle.js` is generated — do not edit it directly.
+- The `dist/bundle.iife.js` is generated — do not edit it directly.
 - External libraries in `src/` are vendored and should not be modified.

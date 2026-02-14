@@ -6,23 +6,23 @@
 import { master } from './globals';
 
 export function setStorage(key: string, value: string): void {
-  localStorage.setItem(key, value);
+	localStorage.setItem(key, value);
 }
 
 export function getStorage(key: string): string | null {
-  return localStorage.getItem(key);
+	return localStorage.getItem(key);
 }
 
 export function deleteStorage(key: string): void {
-  localStorage.removeItem(key);
+	localStorage.removeItem(key);
 }
 
-window.addEventListener('beforeunload', function (e: BeforeUnloadEvent) {
-  if (master.saved) return null;
-  else {
-    const confirmationMessage =
-      'You have made unsaved changes. If you leave without saving these changes will be lost.';
-    e.returnValue = confirmationMessage;
-    return confirmationMessage;
-  }
+window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
+	if (master.saved) return null;
+	else {
+		const confirmationMessage =
+			'You have made unsaved changes. If you leave without saving these changes will be lost.';
+		e.returnValue = confirmationMessage;
+		return confirmationMessage;
+	}
 });
