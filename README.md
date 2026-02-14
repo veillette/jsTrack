@@ -1,15 +1,68 @@
 # jsTrack
-An online version of the [Tracker](https://physlets.org/tracker/) software
 
-### [Live Version Here](https://jst.lucademian.com/)
+A web-based version of the [Tracker](https://physlets.org/tracker/) physics video analysis software. Extract position data from objects in a video for motion tracking and analysis.
 
-### Deployment:
-- With Git:
-  + Clone to computer and open HTML file in browser, no server required 
-- Without Git:
-  + [Download ZIP](https://github.com/lucadem1313/jsTrack/archive/master.zip) of repository and unarchive. Then just open the HTML file in your browser, no server required.
+### [Live Version](https://jst.lucademian.com/)
 
+## Features
 
-If you want to use the drive integration, run a local server in the directory and access with ```http://localhost```.
+- Load MP4/M4V videos and scrub frame-by-frame
+- Create multiple object tracks with click-to-place position points
+- Define measurement scales and coordinate axes
+- View and edit data in a built-in spreadsheet
+- Export data as XLSX, CSV, or TXT
+- Save/load `.jstrack` project files (ZIP format with embedded video)
+- Google Drive integration for cloud storage
+- Keyboard shortcuts and undo/redo support
 
-Setup with your own API keys by following the directions [here](https://developers.google.com/drive/api/v3/quickstart/js) and then changing the keys in ```js/init.js``` and ```index.html```.
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (for building from source)
+
+### Install & Build
+
+```bash
+git clone https://github.com/lucadem1313/jsTrack.git
+cd jsTrack
+npm install
+npm run build
+```
+
+Then open `index.html` in your browser. No server is required.
+
+### Development
+
+```bash
+npm run dev
+```
+
+This runs Webpack in watch mode — edit TypeScript files in `ts/` and the bundle rebuilds automatically.
+
+### Google Drive Integration
+
+To use Drive features, serve the project over HTTP (e.g., `npx http-server`) and access via `http://localhost`. Set up API keys by following the [Google Drive API quickstart](https://developers.google.com/drive/api/v3/quickstart/js), then update the keys in `ts/drive.ts` and `index.html`.
+
+## Tech Stack
+
+- **TypeScript** (strict mode) — source in `ts/`
+- **Webpack** — bundles to `dist/bundle.js`
+- **CreateJS / EaselJS** — canvas rendering
+- **Handsontable** — data table widget
+- **math.js** — unit conversion and calculations
+
+## Project Structure
+
+```
+ts/             TypeScript source code
+  classes/      Core classes (Project, Track, Timeline, Point, etc.)
+  main.ts       Entry point
+src/            Vendored external JS libraries
+dist/           Build output (bundle.js)
+index.html      Main application page
+```
+
+## License
+
+[GPL-3.0](LICENSE.txt)
