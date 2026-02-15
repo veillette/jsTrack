@@ -1,6 +1,6 @@
 # trackTS
 
-A web-based version of the [Tracker](https://physlets.org/tracker/) physics video analysis software and a fork of https://github.com/lucademian/trackTS. 
+A web-based version of the [Tracker](https://physlets.org/tracker/) physics video analysis software and a fork of https://github.com/lucademian/JStrack. 
 
 Extract position data from objects in a video for motion tracking and analysis.
 
