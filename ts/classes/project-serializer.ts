@@ -105,8 +105,7 @@ export class ProjectSerializer {
 			};
 		}
 
-		if (this.project.track != null)
-			saveData.activeTrack = this.project.track.uid;
+		if (this.project.track != null) saveData.activeTrack = this.project.track.uid;
 
 		saveData.tracks = {};
 		for (const uid in this.project.trackList) {

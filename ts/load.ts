@@ -6,6 +6,16 @@
 import { hideLoader } from './functions';
 import { master } from './globals';
 
+/** Wraps JSZipUtils.getBinaryContent in a Promise. */
+export function fetchBinaryContent(url: string): Promise<ArrayBuffer> {
+	return new Promise((resolve, reject) => {
+		JSZipUtils.getBinaryContent(url, (err: Error | null, data: ArrayBuffer) => {
+			if (err) reject(err);
+			else resolve(data);
+		});
+	});
+}
+
 export function loadVideo(file: File | Blob, callback: (() => void) | null = null): void {
 	master.videoFile = file;
 	master.timeline.video.src = URL.createObjectURL(file);
@@ -14,37 +24,24 @@ export function loadVideo(file: File | Blob, callback: (() => void) | null = nul
 	}
 }
 
-export function loadProject(file: File, callback: (() => void) | null = null): void {
+export async function loadProject(file: File, callback: (() => void) | null = null): Promise<void> {
 	const fileUrl = URL.createObjectURL(file);
-	JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
-		if (err) {
-			throw err;
-		}
+	const data = await fetchBinaryContent(fileUrl);
+	const zipData = await JSZip.loadAsync(data);
 
-		JSZip.loadAsync(data).then((zipData: JSZip) => {
-			if (zipData.files['video.mp4'] !== undefined) {
-				zipData
-					.file('video.mp4')
-					.async('blob')
-					.then((videoBlob: Blob) => {
-						loadVideo(videoBlob, () => {
-							if (zipData.files['meta.json'] !== undefined) {
-								zipData
-									.file('meta.json')
-									.async('text')
-									.then((projectJson: string) => {
-										master.load(JSON.parse(projectJson));
-										hideLoader();
-										master.saved = true;
-										master.trigger('created');
-										if (callback !== null) callback();
-									});
-							}
-						});
-					});
+	if (zipData.files['video.mp4'] !== undefined) {
+		const videoBlob = await zipData.file('video.mp4').async('blob');
+		loadVideo(videoBlob as Blob, async () => {
+			if (zipData.files['meta.json'] !== undefined) {
+				const projectJson = await zipData.file('meta.json').async('text');
+				master.load(JSON.parse(projectJson));
+				hideLoader();
+				master.saved = true;
+				master.trigger('created');
+				if (callback !== null) callback();
 			}
 		});
-	});
+	}
 }
 
 export function hideLaunchModal(): void {

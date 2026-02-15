@@ -22,6 +22,7 @@ import {
 	saveProject,
 	stage,
 } from './globals';
+import { fetchBinaryContent } from './load';
 import { DriveUpload } from './saveDrive';
 
 newProject.on('submit', function (data) {
@@ -30,7 +31,12 @@ newProject.on('submit', function (data) {
 	const frameSkip = parseInt(data.frameskip, 10);
 	const pointsForward = parseInt(data.pointsForward, 10);
 	const pointsBackward = parseInt(data.pointsBackward, 10);
-	if (Number.isNaN(videoSpeed) || Number.isNaN(frameSkip) || Number.isNaN(pointsForward) || Number.isNaN(pointsBackward)) {
+	if (
+		Number.isNaN(videoSpeed) ||
+		Number.isNaN(frameSkip) ||
+		Number.isNaN(pointsForward) ||
+		Number.isNaN(pointsBackward)
+	) {
 		return;
 	}
 	master.name = data.name;
@@ -56,40 +62,33 @@ newProject.on('submit', function (data) {
 });
 
 saveProject
-	.on('saveFile', function (modalData) {
+	.on('saveFile', async function (modalData) {
 		if (!modalData) return;
 		if (!master.videoFile) return;
 		showLoader();
-		const fileUrl = URL.createObjectURL(master.videoFile);
-		JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
-			if (err) {
-				console.error(err);
-			}
+		this.hide().clear();
+
+		try {
+			const fileUrl = URL.createObjectURL(master.videoFile);
+			const data = await fetchBinaryContent(fileUrl);
 
 			let filename = modalData.filename || '';
-
 			if (filename.length === 0) {
 				filename = `${master.name.toLowerCase().replace(' ', '_')}-${Date.now()}.${CUSTOM_EXTENSION}`;
 			} else if (filename.split('.').pop() !== CUSTOM_EXTENSION) filename += `.${CUSTOM_EXTENSION}`;
 
 			const projectInfo = JSON.stringify(master.save());
 			const zip = new JSZip();
-
 			zip.file('video.mp4', data, { binary: true }).file('meta.json', projectInfo);
 
-			zip.generateAsync({ type: 'blob', mimeType: 'application/octet-stream' }).then(
-				(blob: Blob) => {
-					saveAs(blob, filename);
-					master.saved = true;
-					hideLoader();
-				},
-				(err: Error) => {
-					console.error(err);
-				},
-			);
-		});
-
-		this.hide().clear();
+			const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/octet-stream' });
+			saveAs(blob, filename);
+			master.saved = true;
+		} catch (err) {
+			console.error(err);
+		} finally {
+			hideLoader();
+		}
 	})
 	.on('create', function (this: typeof saveProject) {
 		const button = document.getElementById(`${this.id}_button-saveDrive`) as HTMLButtonElement | null;
@@ -114,57 +113,36 @@ saveProject
 								clientId: GOOGLE_CLIENT_ID,
 								buttonEl: saveDriveBtn,
 								logoutEl: logoutEl,
-								getFile: (callback) => {
+								getFile: async (callback) => {
 									if (!master.videoFile) return;
 									showLoader();
-									const fileUrl = URL.createObjectURL(master.videoFile);
-									JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
-										if (err) {
-											console.error(err);
-										}
+									try {
+										const fileUrl = URL.createObjectURL(master.videoFile);
+										const data = await fetchBinaryContent(fileUrl);
 
 										const exported = this.export();
 										let filename = exported?.filename || '';
 										if (filename.length === 0) {
-											filename =
-												master.name.toLowerCase().replace(' ', '_') +
-												'-' +
-												Date.now() +
-												'.' +
-												CUSTOM_EXTENSION;
+											filename = `${master.name.toLowerCase().replace(' ', '_')}-${Date.now()}.${CUSTOM_EXTENSION}`;
 										} else if (filename.split('.').pop() !== CUSTOM_EXTENSION)
 											filename += `.${CUSTOM_EXTENSION}`;
 
 										const projectInfo = JSON.stringify(master.save());
 										const zip = new JSZip();
-
 										zip.file('video.mp4', data, { binary: true }).file('meta.json', projectInfo);
 
-										zip.generateAsync({
+										const zipFile = await zip.generateAsync({
 											type: 'blob',
 											mimeType: 'application/octet-stream',
-										}).then(
-											(zipFile: Blob) => {
-												const reader = new FileReader();
-												reader.onload = () => {
-													const result = reader.result;
-													if (!(result instanceof ArrayBuffer)) return;
-													callback(
-														result,
-														filename,
-														(_success: boolean) => {
-															hideLoader();
-															this.hide();
-														},
-													);
-												};
-												reader.readAsArrayBuffer(zipFile);
-											},
-											(err: Error) => {
-												console.error(err);
-											},
-										);
-									});
+										});
+										const arrayBuffer = await zipFile.arrayBuffer();
+										callback(arrayBuffer, filename, (_success: boolean) => {
+											hideLoader();
+											this.hide();
+										});
+									} catch (err) {
+										console.error(err);
+									}
 								},
 							});
 						}
