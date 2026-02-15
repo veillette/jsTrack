@@ -22,7 +22,7 @@ export class Frame {
 		this.time = time;
 		this.number = number;
 		this.timeline = timeline;
-		this.uid = (Math.round(Math.random() * 100000) + 1).toString();
+		this.uid = crypto.randomUUID();
 		this.points = [];
 	}
 }

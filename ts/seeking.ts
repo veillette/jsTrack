@@ -3,7 +3,6 @@
  * Copyright (C) 2018 Luca Demian
  */
 
-import './functions';
 import { master } from './globals';
 import { frameArrows, scrubberLine } from './scrubber';
 

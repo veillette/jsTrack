@@ -8,7 +8,7 @@
  * any later version.
  */
 
-import '../functions';
+import { cot, toDegrees, toRadians } from '../functions';
 import type { Project } from './project';
 
 export interface Coordinate {
@@ -121,9 +121,9 @@ export class Axes {
 					theta = 0;
 				}
 
-				this.cursor(theta.toDegrees());
+				this.cursor(toDegrees(theta));
 
-				this.shape.rotation = -theta.toDegrees();
+				this.shape.rotation = -toDegrees(theta);
 			}
 		});
 		this.shape.addEventListener('pressup', () => {
@@ -161,16 +161,16 @@ export class Axes {
 				});
 			} else if (rotating) {
 				const lastRotation = this.theta;
-				const newRotation = (this.theta = -this.shape.rotation.toRadians());
+				const newRotation = (this.theta = -toRadians(this.shape.rotation));
 				this.project.change({
 					undo: () => {
 						this.theta = lastRotation;
-						this.shape.rotation = -lastRotation.toDegrees();
+						this.shape.rotation = -toDegrees(lastRotation);
 						this.project.update();
 					},
 					redo: () => {
 						this.theta = newRotation;
-						this.shape.rotation = -newRotation.toDegrees();
+						this.shape.rotation = -toDegrees(newRotation);
 						this.project.update();
 					},
 				});
@@ -192,7 +192,7 @@ export class Axes {
 
 	rotate(radians: number): void {
 		this.theta = radians;
-		this.shape.rotation = -this.theta.toDegrees();
+		this.shape.rotation = -toDegrees(this.theta);
 	}
 
 	updateColor(color: string): void {
@@ -203,7 +203,7 @@ export class Axes {
 		this.project.changed();
 	}
 
-	cursor(cursorDegree: number = this.theta.toDegrees()): void {
+	cursor(cursorDegree: number = toDegrees(this.theta)): void {
 		if ((cursorDegree >= 0 && cursorDegree <= 20) || (cursorDegree > 340 && cursorDegree <= 360)) {
 			this.shape.cursor = 'ns-resize';
 		} else if (cursorDegree > 20 && cursorDegree <= 60) {
@@ -224,27 +224,31 @@ export class Axes {
 	}
 
 	convert(x: number | Coordinate, y: number | null = null): Coordinate {
-		if (typeof x === 'object' && y === null) {
-			y = x.y;
-			x = x.x;
-		}
-		if (typeof x !== 'number' || typeof y !== 'number') {
+		let xVal: number;
+		let yVal: number;
+		if (typeof x === 'object') {
+			xVal = x.x;
+			yVal = y ?? x.y;
+		} else if (typeof y === 'number') {
+			xVal = x;
+			yVal = y;
+		} else {
 			return { x: 0, y: 0 };
 		}
 
-		const coords = { x: x, y: -y };
+		const coords = { x: xVal, y: -yVal };
 		const origin = { x: this.x, y: -this.y };
 
 		const tan = Math.tan(this.theta);
-		const cot = Math.cot(this.theta);
+		const cotTheta = cot(this.theta);
 
 		const interceptX = { x: 0, y: 0 };
-		interceptX.x = (-origin.y + coords.y + tan * origin.x + cot * coords.x) / (cot + tan);
+		interceptX.x = (-origin.y + coords.y + tan * origin.x + cotTheta * coords.x) / (cotTheta + tan);
 		interceptX.y = tan * interceptX.x + (origin.y - tan * origin.x);
 
 		const interceptY = { x: 0, y: 0 };
-		interceptY.x = (-coords.y + origin.y + tan * coords.x + cot * origin.x) / (cot + tan);
-		interceptY.y = -cot * interceptY.x + (origin.y + cot * origin.x);
+		interceptY.x = (-coords.y + origin.y + tan * coords.x + cotTheta * origin.x) / (cotTheta + tan);
+		interceptY.y = -cotTheta * interceptY.x + (origin.y + cotTheta * origin.x);
 
 		let signX = Math.sign(interceptX.x - origin.x);
 		if (this.theta > 0.5 * Math.PI && this.theta < 1.5 * Math.PI) {

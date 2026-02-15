@@ -8,13 +8,12 @@
  * any later version.
  */
 
-import '../functions';
+import { roundTo } from '../functions';
+import { EventEmitter } from './event-emitter';
 import { Frame } from './frame';
 import type { Project } from './project';
 
-type TimelineCallback = (this: Timeline, args: unknown[]) => void;
-
-export class Timeline {
+export class Timeline extends EventEmitter {
 	duration: number;
 	video: HTMLVideoElement;
 	width: number;
@@ -32,20 +31,20 @@ export class Timeline {
 	seekSaved: boolean;
 	startFrame: number;
 	endFrame: number;
-	callbacks: Record<string, TimelineCallback[]>;
 	frames: Frame[];
 	activeFrames: Frame[];
 	playInterval: ReturnType<typeof setInterval> | undefined;
 	project!: Project;
 
 	constructor(width: number, height: number, video: HTMLVideoElement, fps: number) {
-		this.duration = video.duration.roundTo(3);
+		super();
+		this.duration = roundTo(video.duration, 3);
 		this.video = video;
 		this.width = width;
 		this.height = height;
 		this.fps = fps;
 		this.frameSkip = 1;
-		this.frameTime = (1 / this.fps).roundTo(3);
+		this.frameTime = roundTo(1 / this.fps, 3);
 		this.frameCount = Math.floor(this.duration / this.frameTime);
 		this.currentTime = 0;
 		this.currentFrame = 0;
@@ -55,39 +54,15 @@ export class Timeline {
 		this.seekSaved = false;
 		this.startFrame = 0;
 		this.endFrame = 1;
-		this.callbacks = {};
 		this.frames = [new Frame(this, 0, 0)];
 		this.activeFrames = [];
 	}
 
 	createFrames(): void {
 		let counter = 1;
-		for (let time = this.frameTime; time <= this.video.duration; time = (time + this.frameTime).roundTo(3)) {
+		for (let time = this.frameTime; time <= this.video.duration; time = roundTo(time + this.frameTime, 3)) {
 			this.frames[counter] = new Frame(this, time, counter);
 			counter++;
-		}
-	}
-
-	trigger(events: string, argArray: unknown[] = []): void {
-		const eventList = events.split(',');
-		for (let i = 0; i < eventList.length; i++) {
-			const event = eventList[i].trim();
-			if (this.callbacks[event] !== undefined) {
-				for (let j = 0; j < this.callbacks[event].length; j++) {
-					this.callbacks[event][j].call(this, argArray);
-				}
-			}
-		}
-	}
-
-	on(events: string, callback: TimelineCallback): void {
-		const eventList = events.split(',');
-		for (let i = 0; i < eventList.length; i++) {
-			const event = eventList[i].trim();
-			if (this.callbacks[event] === undefined) {
-				this.callbacks[event] = [];
-			}
-			this.callbacks[event].push(callback);
 		}
 	}
 
@@ -127,7 +102,8 @@ export class Timeline {
 						tempVideo.currentTime = tempTime;
 					} else if (frame !== startFrame && matchCount === 1) {
 						matchCount++;
-						let framerate = (tempVideo.duration / (tempTime - startFrameTime) / tempVideo.duration).roundTo(
+						let framerate = roundTo(
+							tempVideo.duration / (tempTime - startFrameTime) / tempVideo.duration,
 							2,
 						);
 
@@ -241,11 +217,11 @@ export class Timeline {
 			if (this.lastFrame < this.currentFrame) this.direction = 'forward';
 			else this.direction = 'backward';
 
-			this.currentTime = (this.currentFrame * this.frameTime).roundTo(3);
+			this.currentTime = roundTo(this.currentFrame * this.frameTime, 3);
 
 			this.trigger('seek');
 		} else {
-			this.currentTime = (this.currentFrame * this.frameTime).roundTo(3);
+			this.currentTime = roundTo(this.currentFrame * this.frameTime, 3);
 		}
 
 		if (this.video.currentTime !== this.currentTime) {
@@ -258,11 +234,11 @@ export class Timeline {
 			start: this.startFrame / this.frameCount || 0,
 			end: this.endFrame / this.frameCount || 1,
 		};
-		this.duration = duration.roundTo(3);
+		this.duration = roundTo(duration, 3);
 		this.fps = parseFloat(String(fps));
-		this.frameTime = (1 / this.fps).roundTo(3);
+		this.frameTime = roundTo(1 / this.fps, 3);
 		this.frameCount = Math.floor(this.duration / this.frameTime);
-		this.duration = (this.frameCount * this.frameTime).roundTo(3);
+		this.duration = roundTo(this.frameCount * this.frameTime, 3);
 		this.startFrame = Math.floor(ratios.start * this.frameCount);
 		this.endFrame = Math.floor(ratios.end * this.frameCount);
 		this.trigger('timingUpdate');
@@ -282,7 +258,7 @@ export class Timeline {
 		if (frame !== undefined) {
 			this.lastFrame = this.currentFrame;
 			this.currentFrame = frame.number;
-			this.currentTime = frame.time.roundTo(3);
+			this.currentTime = roundTo(frame.time, 3);
 			this.video.currentTime = frame.time;
 
 			if (this.lastFrame < this.currentFrame) this.direction = 'forward';
@@ -295,11 +271,11 @@ export class Timeline {
 	}
 
 	getClosestFrame(time: number = this.currentTime): number {
-		return Math.floor((time / this.frameTime).roundTo(3));
+		return Math.floor(roundTo(time / this.frameTime, 3));
 	}
 
 	getFrameStart(frameNum: number): number {
-		return (this.frameTime * frameNum).roundTo(3);
+		return roundTo(this.frameTime * frameNum, 3);
 	}
 
 	next(): Frame | false {

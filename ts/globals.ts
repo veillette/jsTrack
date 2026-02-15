@@ -3,7 +3,6 @@
  * All modules import from here to access shared state.
  */
 
-import './functions';
 import { Modal } from './classes/modal';
 import { Project } from './classes/project';
 import { Timeline } from './classes/timeline';
@@ -209,5 +208,5 @@ export const editTrack = new Modal({
 	buttons: { cancel: { label: 'Cancel' }, submit: { label: 'Save' } },
 });
 
-// Expose editTrack globally so Track class dblclick handler can access it
-(window as unknown as Record<string, unknown>).editTrack = editTrack;
+// Wire up Track dblclick → editTrack modal (avoids circular imports)
+master.onEditTrack = (data) => editTrack.push(data).show();

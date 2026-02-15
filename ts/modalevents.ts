@@ -50,8 +50,9 @@ newProject.on('submit', function (data) {
 saveProject
 	.on('saveFile', function (modalData) {
 		if (!modalData) return;
+		if (!master.videoFile) return;
 		showLoader();
-		const fileUrl = URL.createObjectURL(master.videoFile!);
+		const fileUrl = URL.createObjectURL(master.videoFile);
 		JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
 			if (err) {
 				console.log(err);
@@ -100,8 +101,9 @@ saveProject
 								buttonEl: saveDriveBtn,
 								logoutEl: logoutEl,
 								getFile: (callback) => {
+									if (!master.videoFile) return;
 									showLoader();
-									const fileUrl = URL.createObjectURL(master.videoFile!);
+									const fileUrl = URL.createObjectURL(master.videoFile);
 									JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
 										if (err) {
 											console.log(err);

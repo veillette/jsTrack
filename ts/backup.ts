@@ -56,8 +56,9 @@ interface BackupInfo {
 }
 
 function projectBackup(): void {
+	if (!master.videoFile) return;
 	let success: number | false = false;
-	const fileUrl = URL.createObjectURL(master.videoFile!);
+	const fileUrl = URL.createObjectURL(master.videoFile);
 	JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, videoFile: ArrayBuffer) => {
 		if (err) {
 			console.log(err);
@@ -67,11 +68,8 @@ function projectBackup(): void {
 
 		const projectInfo = JSON.stringify(master.save());
 		const lastBackupRaw = getStorage('backup');
-		let lastBackup: BackupInfo | null = lastBackupRaw ? JSON.parse(lastBackupRaw) : null;
-
-		if (lastBackup === null) {
-			lastBackup = { uid: '', video: null, date: null };
-		}
+		const lastBackupParsed: BackupInfo | null = lastBackupRaw ? JSON.parse(lastBackupRaw) : null;
+		const lastBackup: BackupInfo = lastBackupParsed ?? { uid: '', video: null, date: null };
 
 		const toBackup: BackupInfo = {
 			uid: String(master.uid),
@@ -97,9 +95,9 @@ function projectBackup(): void {
 						setStorage('backup', JSON.stringify(toBackup));
 
 						if (
-							lastBackup!.video === null ||
-							lastBackup!.video === '' ||
-							lastBackup!.video === undefined ||
+							lastBackup.video === null ||
+							lastBackup.video === '' ||
+							lastBackup.video === undefined ||
 							!sameProject
 						) {
 							const videoZip = new JSZip();
@@ -134,14 +132,14 @@ function projectBackup(): void {
 							);
 						} else if (sameProject) {
 							if (
-								lastBackup!.video !== null &&
-								lastBackup!.video !== '' &&
-								lastBackup!.video !== undefined
+								lastBackup.video !== null &&
+								lastBackup.video !== '' &&
+								lastBackup.video !== undefined
 							) {
 								try {
-									setStorage('video', lastBackup!.video);
+									setStorage('video', lastBackup.video);
 									deleteStorage('video');
-									toBackup.video = lastBackup!.video;
+									toBackup.video = lastBackup.video;
 									setStorage('backup', JSON.stringify(toBackup));
 									master.backup();
 									success = 2;

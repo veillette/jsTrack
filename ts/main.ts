@@ -5,10 +5,7 @@
  * Main entry point - imports all modules in the correct order.
  */
 
-// 1. Prototype extensions and utility functions
-import './functions';
-
-// 2. Global state (project, stage, modals, etc.)
+// 1. Global state (project, stage, modals, etc.)
 import './globals';
 
 // 3. Compatibility / storage helpers

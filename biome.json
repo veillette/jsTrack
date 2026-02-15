@@ -15,13 +15,13 @@
         "noForEach": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off",
+        "noExplicitAny": "error",
         "noAssignInExpressions": "off"
       },
       "style": {
-        "noNonNullAssertion": "off",
+        "noNonNullAssertion": "error",
         "useConst": "warn",
-        "noParameterAssign": "off"
+        "noParameterAssign": "error"
       },
       "correctness": {
         "noUnusedVariables": "warn",

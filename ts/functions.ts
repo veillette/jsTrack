@@ -22,97 +22,46 @@
  *
  */
 
-// ─── Prototype Extensions ───
+// ─── Math Utility Functions ───
 
-declare global {
-	interface Array<T> {
-		last(): T | undefined;
-	}
-	interface Number {
-		roundTo(x: number): number;
-		roundSig(x: number): number;
-		toDegrees(): number;
-		toRadians(): number;
-		sigFigs(): number;
-	}
-	interface String {
-		roundTo(x: number): number;
-		sigFigs(): number;
-		utf8Length(): number;
-	}
-	interface Math {
-		cot(x: number): number;
-	}
+export function roundTo(value: number, x: number): number {
+	return parseFloat(parseFloat(String(value)).toFixed(x));
 }
 
-if (!Array.prototype.last) {
-	Array.prototype.last = function <T>(this: T[]): T | undefined {
-		return this[this.length - 1];
-	};
+export function roundSig(value: number, x: number): number {
+	return parseFloat(parseFloat(String(value)).toPrecision(x));
 }
 
-if (!Number.prototype.roundTo) {
-	Number.prototype.roundTo = function (this: number, x: number): number {
-		return parseFloat(parseFloat(String(this)).toFixed(x));
-	};
+export function toDegrees(radians: number): number {
+	return radians * (180 / Math.PI);
 }
 
-if (!Number.prototype.roundSig) {
-	Number.prototype.roundSig = function (this: number, x: number): number {
-		return parseFloat(parseFloat(String(this)).toPrecision(x));
-	};
+export function toRadians(degrees: number): number {
+	return degrees * (Math.PI / 180);
 }
 
-if (!String.prototype.roundTo) {
-	String.prototype.roundTo = function (this: string, x: number): number {
-		return parseFloat(parseFloat(this).toFixed(x));
-	};
+export function sigFigs(value: number): number {
+	const log10 = Math.log(10);
+	let n = Math.abs(Number(String(value).replace('.', '')));
+	if (n === 0) return 0;
+	while (n !== 0 && n % 10 === 0) n /= 10;
+	return Math.floor(Math.log(n) / log10) + 1;
 }
 
-if (!Number.prototype.toDegrees) {
-	Number.prototype.toDegrees = function (this: number): number {
-		return this * (180 / Math.PI);
-	};
+export function cot(x: number): number {
+	return 1 / Math.tan(x);
 }
 
-if (!Number.prototype.toRadians) {
-	Number.prototype.toRadians = function (this: number): number {
-		return this * (Math.PI / 180);
-	};
+export function last<T>(arr: T[]): T | undefined {
+	return arr[arr.length - 1];
 }
 
-if (!Number.prototype.sigFigs) {
-	Number.prototype.sigFigs = function (this: number): number {
-		const log10 = Math.log(10);
-		let n = Math.abs(Number(String(this).replace('.', '')));
-		if (n === 0) return 0;
-		while (n !== 0 && n % 10 === 0) n /= 10;
-		return Math.floor(Math.log(n) / log10) + 1;
-	};
+export function utf8Length(str: string): number {
+	const m = encodeURIComponent(str).match(/%[89ABab]/g);
+	return str.length + (m ? m.length : 0);
 }
 
-if (!String.prototype.sigFigs) {
-	String.prototype.sigFigs = function (this: string): number {
-		const log10 = Math.log(10);
-		let n = Math.abs(Number(String(this).replace('.', '')));
-		if (n === 0) return 0;
-		while (n !== 0 && n % 10 === 0) n /= 10;
-		return Math.floor(Math.log(n) / log10) + 1;
-	};
-}
-
-if (!(Math as { cot?: (x: number) => number }).cot) {
-	(Math as { cot: (x: number) => number }).cot = (number: number): number => 1 / Math.tan(number);
-}
-
-if (!String.prototype.utf8Length) {
-	String.prototype.utf8Length = function (this: string): number {
-		const m = encodeURIComponent(this).match(/%[89ABab]/g);
-		return this.length + (m ? m.length : 0);
-	};
-}
-
-// ─── Utility Functions ───
+// ─── DOM Utility Functions ───
 
 export function hideLoader(): void {
 	const el = document.getElementById('fullscreen-loader');

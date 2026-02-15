@@ -3,6 +3,8 @@
  * By Daniel Lo Nigro (http://dan.cx/)
  */
 
+import { utf8Length } from './functions';
+
 interface DriveUploadOptions {
 	apiKey: string;
 	clientId: string;
@@ -66,7 +68,7 @@ export class DriveUpload {
 						'X-Upload-Content-Type': 'application/x-zip',
 						'X-Upload-Content-Length': String(file.byteLength),
 						'Content-Type': 'application/json; charset=UTF-8',
-						'Content-Length': String(JSON.stringify(metadata).utf8Length()),
+						'Content-Length': String(utf8Length(JSON.stringify(metadata))),
 					},
 					body: metadata,
 				})

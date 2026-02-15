@@ -8,7 +8,6 @@
  * any later version.
  */
 
-import '../functions';
 import type { Coordinate } from './axes';
 import type { Project } from './project';
 
@@ -54,7 +53,7 @@ export class Scale {
 		this.project = project;
 		this.color = color;
 		this.nodeSize = 8;
-		this.uid = (Math.round(Math.random() * 100000000) + 1).toString();
+		this.uid = crypto.randomUUID();
 		this.positions = [
 			{ x: x1, y: y1 },
 			{ x: x2, y: y2 },

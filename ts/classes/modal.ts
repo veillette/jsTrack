@@ -32,28 +32,28 @@ export interface ModalSchema {
 	text?: string[];
 }
 
-export type ModalExportData = Record<string, string> | false;
-type ModalCallback = (this: Modal, data: ModalExportData) => void;
+import { type EventCallback, EventEmitter } from './event-emitter';
 
-export class Modal {
+export type ModalExportData = Record<string, string> | false;
+
+export class Modal extends EventEmitter {
 	name: string;
 	id: string;
 	fields: Record<string, ModalFieldSchema>;
 	buttons: Record<string, ModalButtonSchema>;
 	text: string[] | undefined;
-	callbacks: Record<string, ModalCallback[]>;
 	created: boolean;
 	defaultColors: string[];
 	element!: HTMLDivElement;
 	textContainer!: HTMLDivElement;
 
 	constructor(schema: ModalSchema, create = true) {
+		super();
 		this.name = schema.name;
 		this.id = schema.id;
 		this.fields = schema.fields;
 		this.buttons = schema.buttons;
 		this.text = schema.text;
-		this.callbacks = {};
 		this.created = false;
 		this.defaultColors = [
 			'#FFFF00',
@@ -87,16 +87,12 @@ export class Modal {
 		}
 	}
 
-	on(event: string, callback: ModalCallback): this {
-		const events = event.split(',');
+	override on(event: string, callback: EventCallback): this {
+		super.on(event, callback);
 
-		for (let i = 0; i < events.length; i++) {
-			const tempEvent = events[i].trim();
-			if (this.callbacks[tempEvent] === undefined) this.callbacks[tempEvent] = [];
-
-			this.callbacks[tempEvent].push(callback);
-
-			if (tempEvent === 'create' && this.created) {
+		// If subscribing to 'create' after the modal is already created, fire immediately
+		for (const e of event.split(',')) {
+			if (e.trim() === 'create' && this.created) {
 				callback.call(this, this.export());
 			}
 		}
@@ -141,7 +137,7 @@ export class Modal {
 				formItemInput.type = 'text';
 				formItemInput.classList.add('colorpicker');
 				this.fields[field].picker = new CP(formItemInput);
-				this.fields[field].picker!.on('change', function (this: CP, color: string) {
+				this.fields[field].picker?.on('change', function (this: CP, color: string) {
 					this.target.value = `#${color}`;
 					this.target.style.background = `#${color}`;
 				});
@@ -169,7 +165,7 @@ export class Modal {
 			formItemInput.value = String(this.fields[field].initVal);
 			if (this.fields[field].type === 'color') {
 				formItemInput.style.background = String(this.fields[field].initVal);
-				this.fields[field].picker!.set(String(this.fields[field].initVal));
+				this.fields[field].picker?.set(String(this.fields[field].initVal));
 			}
 
 			if (this.fields[field].type !== 'hidden') {
@@ -225,12 +221,8 @@ export class Modal {
 		return this;
 	}
 
-	trigger(event: string): void {
-		if (this.callbacks[event] !== undefined) {
-			for (let i = 0; i < this.callbacks[event].length; i++) {
-				this.callbacks[event][i].call(this, this.export());
-			}
-		}
+	override trigger(event: string): this {
+		return super.trigger(event, this.export());
 	}
 
 	export(): ModalExportData {
@@ -270,7 +262,7 @@ export class Modal {
 					if (el) {
 						el.value = value[field];
 						if (this.fields[field].type === 'color') {
-							this.fields[field].picker!.set(value[field]);
+							this.fields[field].picker?.set(value[field]);
 							el.style.background = value[field];
 						}
 					}

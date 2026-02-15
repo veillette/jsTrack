@@ -8,7 +8,6 @@
  * any later version.
  */
 
-import '../functions';
 import type { Axes } from './axes';
 import type { Frame } from './frame';
 import { Point, type PointExportData } from './point';
@@ -31,6 +30,7 @@ interface TrackState {
 	triggerChange(): void;
 	resetMode(): void;
 	modeChange(val: TrackModeCallback): void;
+	offModeChange(val: TrackModeCallback): void;
 	selectionChange(val: TrackSelectionCallback): void;
 }
 
@@ -99,7 +99,7 @@ export class Track {
 		this.selectedPoint = null;
 		this.emphasizedPoint = null;
 		this.table = new Table(this, { t: 's', x: this.unit, y: this.unit });
-		if (uid === false) this.uid = (Math.round(Math.random() * 100000000) + 1).toString();
+		if (uid === false) this.uid = crypto.randomUUID();
 		else this.uid = uid.toString();
 		this.listElement = {
 			container: document.createElement('li'),
@@ -157,6 +157,10 @@ export class Track {
 			modeChange(val: TrackModeCallback) {
 				this.modeCallbacks.push(val);
 			},
+			offModeChange(val: TrackModeCallback) {
+				const idx = this.modeCallbacks.indexOf(val);
+				if (idx !== -1) this.modeCallbacks.splice(idx, 1);
+			},
 			set selected(val: boolean) {
 				this._selected = val;
 				for (let i = 0; i < this.selectionCallbacks.length; i++) {
@@ -198,18 +202,12 @@ export class Track {
 			tempTrack.project.switchTrack(tempTrack.uid);
 		});
 		this.listElement.container.addEventListener('dblclick', () => {
-			// editTrack is a global modal - accessed via the app module
-			const editTrackModal = (
-				window as unknown as Record<string, { push: (data: Record<string, string>) => { show: () => void } }>
-			).editTrack;
-			if (editTrackModal) {
-				editTrackModal
-					.push({
-						name: tempTrack.name,
-						color: tempTrack.color,
-						uid: tempTrack.uid,
-					})
-					.show();
+			if (tempTrack.project.onEditTrack) {
+				tempTrack.project.onEditTrack({
+					name: tempTrack.name,
+					color: tempTrack.color,
+					uid: tempTrack.uid,
+				});
 			}
 		});
 
