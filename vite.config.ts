@@ -6,7 +6,7 @@ export default defineConfig({
     outDir: 'dist',
     lib: {
       entry: resolve(__dirname, 'ts/main.ts'),
-      name: 'jsTrack',
+      name: 'trackTS',
       fileName: 'bundle',
       formats: ['iife'],
     },

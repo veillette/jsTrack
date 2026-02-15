@@ -1,5 +1,5 @@
 /**
- * Shared global state module for jsTrack.
+ * Shared global state module for trackTS.
  * All modules import from here to access shared state.
  */
 
@@ -26,7 +26,7 @@ export const EXPORT_FORMATS = [
 	'prn',
 	'eth',
 ];
-export const CUSTOM_EXTENSION = 'jstrack';
+export const CUSTOM_EXTENSION = 'trackts';
 export const VIDEO_CONVERTOR = 'https://video.online-convert.com/convert-to-mp4';
 export const GOOGLE_API_KEY = 'AIzaSyDIijziwMBTuCoKGMXhaVzBzUZibDVwiBM';
 export const GOOGLE_CLIENT_ID = '44440188363-5vnafandpsrppr9189u7sc8q755oar9d';

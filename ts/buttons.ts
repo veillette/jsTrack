@@ -1,5 +1,5 @@
 /**
- * jsTrack: web-based Tracker (https://physlets.org/tracker/). Get position data from objects in a video.
+ * trackTS: web-based Tracker (https://physlets.org/tracker/). Get position data from objects in a video.
  * Copyright (C) 2018 Luca Demian
  */
 
@@ -79,7 +79,7 @@ document.querySelector('#save-button:not(.disabled)')?.addEventListener('click',
 
 document.querySelectorAll('.help-button:not(.disabled)').forEach((el) => {
 	el.addEventListener('click', () => {
-		window.open('using_jstrack.pdf', '_blank');
+		window.open('using_trackts.pdf', '_blank');
 	});
 });
 

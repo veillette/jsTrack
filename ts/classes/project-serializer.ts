@@ -1,6 +1,6 @@
 /**
  * ProjectSerializer handles saving and loading project data
- * to/from the .jstrack file format.
+ * to/from the .trackts file format.
  */
 
 import type { Coordinate } from './axes';
@@ -69,7 +69,7 @@ export class ProjectSerializer {
 	save(): ProjectSaveFile {
 		const metaInfo: MetaInfo = {
 			date: new Date().toString(),
-			createdWith: 'Created with JSTrack by Luca Demian',
+			createdWith: 'Created with trackTS by Luca Demian',
 			appVersion: 0.1,
 			fileVersion: 0.3,
 		};

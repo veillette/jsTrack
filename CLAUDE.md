@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with the jsTrack codebase.
+This file provides guidance to Claude Code when working with the trackTS codebase.
 
 ## Project Overview
 
-jsTrack is a web-based video tracking application — a TypeScript port of the physics education software [Tracker](https://physlets.org/tracker/). It allows users to extract position data from objects in videos for motion analysis.
+trackTS is a web-based video tracking application — a TypeScript port of the physics education software [Tracker](https://physlets.org/tracker/). It allows users to extract position data from objects in videos for motion analysis.
 
 ## Build & Development Commands
 
@@ -67,7 +67,7 @@ Project
 
 ### File Formats
 
-- `.jstrack` — ZIP containing JSON project data + embedded video
+- `.trackts` — ZIP containing JSON project data + embedded video
 - Export formats: XLSX, CSV, TXT
 
 ## TypeScript Configuration

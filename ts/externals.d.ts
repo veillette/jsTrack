@@ -1,5 +1,5 @@
 /**
- * Type declarations for external libraries used by jsTrack.
+ * Type declarations for external libraries used by trackTS.
  */
 
 // ─── CreateJS (EaselJS) ───

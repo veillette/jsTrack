@@ -1,6 +1,6 @@
 {
-    "name": "jsTrack",
-    "short_name": "jsTrack: Tracker for the Web",
+    "name": "trackTS",
+    "short_name": "trackTS: Tracker for the Web",
     "icons": [{
       "src": "icons/app_icon/app_icon-128x128.png",
         "sizes": "128x128",

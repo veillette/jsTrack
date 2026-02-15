@@ -1,5 +1,5 @@
 /**
- * jsTrack: web-based Tracker (https://physlets.org/tracker/). Get position data from objects in a video.
+ * trackTS: web-based Tracker (https://physlets.org/tracker/). Get position data from objects in a video.
  * Copyright (C) 2018 Luca Demian
  */
 

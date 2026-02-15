@@ -1,6 +1,6 @@
 # Remaining Recommendations
 
-Code quality improvements identified for jsTrack that have not yet been implemented.
+Code quality improvements identified for trackTS that have not yet been implemented.
 
 ## Already Completed
 

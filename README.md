@@ -1,6 +1,6 @@
 # trackTS
 
-A web-based version of the [Tracker](https://physlets.org/tracker/) physics video analysis software and a fork of https://github.com/lucademian/jsTrack. 
+A web-based version of the [Tracker](https://physlets.org/tracker/) physics video analysis software and a fork of https://github.com/lucademian/trackTS. 
 
 Extract position data from objects in a video for motion tracking and analysis.
 
@@ -11,7 +11,7 @@ Extract position data from objects in a video for motion tracking and analysis.
 - Define measurement scales and coordinate axes
 - View and edit data in a built-in spreadsheet
 - Export data as XLSX, CSV, or TXT
-- Save/load `.jstrack` project files (ZIP format with embedded video)
+- Save/load `.trackts` project files (ZIP format with embedded video)
 - Google Drive integration for cloud storage
 - Keyboard shortcuts and undo/redo support
 
