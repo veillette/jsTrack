@@ -12,7 +12,7 @@ keyboardJS.on(
 	'shift',
 	(e: KeyboardJSEvent) => {
 		e.preventRepeat();
-		if (master.track !== null && master.track !== undefined) {
+		if (master.track != null) {
 			master.state.mode = 'add';
 			for (const uid in master.trackList) {
 				master.trackList[uid].state.mode = 'add';
@@ -20,7 +20,7 @@ keyboardJS.on(
 		}
 	},
 	() => {
-		if (master.track !== null && master.track !== undefined) {
+		if (master.track != null) {
 			master.state.reset();
 			for (const uid in master.trackList) {
 				master.trackList[uid].state.resetMode();
@@ -41,8 +41,8 @@ keyboardJS.on(
 );
 
 keyboardJS.on(['delete', 'backspace'], () => {
-	if (master.track !== undefined && master.track !== null) {
-		if (master.track.selectedPoint !== null && master.track.selectedPoint !== undefined) {
+	if (master.track != null) {
+		if (master.track.selectedPoint != null) {
 			master.track.selectedPoint.shape.dispatchEvent(new Event('dblclick'));
 		}
 	}

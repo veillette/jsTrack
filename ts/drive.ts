@@ -77,10 +77,13 @@ class FilePicker {
 	}
 
 	private _pickerCallback(data: Record<string, unknown>): void {
-		if (data[google.picker.Response.ACTION as unknown as string] === google.picker.Action.PICKED) {
-			const docs = data[google.picker.Response.DOCUMENTS as unknown as string] as Array<Record<string, string>>;
+		const actionKey = String(google.picker.Response.ACTION);
+		const documentsKey = String(google.picker.Response.DOCUMENTS);
+		const idKey = String(google.picker.Document.ID);
+		if (data[actionKey] === google.picker.Action.PICKED) {
+			const docs = data[documentsKey] as Array<Record<string, string>>;
 			const file = docs[0];
-			const id = file[google.picker.Document.ID as unknown as string];
+			const id = file[idKey];
 			const request = gapi.client.drive.files.get({ fileId: id });
 			request.execute(this._fileGetCallback.bind(this));
 		}

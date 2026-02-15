@@ -190,7 +190,7 @@ export class Point {
 			data.pixels.x = roundTo(location.x, 5);
 			data.pixels.y = roundTo(location.y, 5);
 
-			if (scale === null || scale === undefined) {
+			if (scale == null) {
 				data.scaled.x = roundTo(location.x, 5);
 				data.scaled.y = roundTo(location.y, 5);
 			} else {

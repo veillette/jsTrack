@@ -94,12 +94,7 @@ function projectBackup(): void {
 						toBackup.data = reader.result as string;
 						setStorage('backup', JSON.stringify(toBackup));
 
-						if (
-							lastBackup.video === null ||
-							lastBackup.video === '' ||
-							lastBackup.video === undefined ||
-							!sameProject
-						) {
+						if (!lastBackup.video || !sameProject) {
 							const videoZip = new JSZip();
 							videoZip.file('video.mp4', videoFile, { binary: true });
 							videoZip.generateAsync({ type: 'blob' }).then(
@@ -131,11 +126,7 @@ function projectBackup(): void {
 								},
 							);
 						} else if (sameProject) {
-							if (
-								lastBackup.video !== null &&
-								lastBackup.video !== '' &&
-								lastBackup.video !== undefined
-							) {
+							if (lastBackup.video) {
 								try {
 									setStorage('video', lastBackup.video);
 									deleteStorage('video');
@@ -186,14 +177,14 @@ master.on('change', function (this: typeof master) {
 });
 
 const backupRaw = getStorage('backup');
-if (backupRaw !== undefined && backupRaw !== null && backupRaw !== '') {
+if (backupRaw) {
 	const launchEl = document.getElementById('launch');
 	if (launchEl?.classList.contains('active')) {
 		const backupInfo: BackupInfo = JSON.parse(backupRaw);
 		const dateStr = backupInfo.date || new Date().toString();
 		const date = new Date(dateStr).toLocaleString();
 		if (confirm(`You have a project backup from ${date}. Would you like to recover this?`)) {
-			if (backupInfo.video !== undefined && backupInfo.video !== null && backupInfo.video !== '') {
+			if (backupInfo.video) {
 				showLoader();
 				const file = dataURLtoBlob(backupInfo.video);
 
@@ -207,11 +198,7 @@ if (backupRaw !== undefined && backupRaw !== null && backupRaw !== '') {
 							.async('blob')
 							.then((videoBlob: Blob) => {
 								loadVideo(videoBlob, () => {
-									if (
-										backupInfo.data !== undefined &&
-										backupInfo.data !== null &&
-										backupInfo.data !== ''
-									) {
+									if (backupInfo.data) {
 										const dataFile = dataURLtoBlob(backupInfo.data);
 
 										const dataFileUrl = URL.createObjectURL(dataFile);
@@ -239,7 +226,7 @@ if (backupRaw !== undefined && backupRaw !== null && backupRaw !== '') {
 							});
 					});
 				});
-			} else if (backupInfo.data !== undefined && backupInfo.data !== null && backupInfo.data !== '') {
+			} else if (backupInfo.data) {
 				const file = dataURLtoBlob(backupInfo.data);
 				const fileUrl = URL.createObjectURL(file);
 				JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
@@ -252,11 +239,7 @@ if (backupRaw !== undefined && backupRaw !== null && backupRaw !== '') {
 							.then((projectJson: string) => {
 								let videoName = '';
 								let rawVideoName = '';
-								if (
-									backupInfo.videoName !== undefined &&
-									backupInfo.videoName !== null &&
-									backupInfo.videoName !== ''
-								) {
+								if (backupInfo.videoName) {
 									videoName = `(${backupInfo.videoName}) `;
 									rawVideoName = backupInfo.videoName;
 								}

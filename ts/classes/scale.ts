@@ -58,7 +58,7 @@ export class Scale {
 			{ x: x1, y: y1 },
 			{ x: x2, y: y2 },
 		];
-		if (size === null || size === undefined) {
+		if (size == null) {
 			this.textValue = math.unit('1m').toString();
 			this.size = math.unit('1m');
 		} else {

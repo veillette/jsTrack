@@ -88,7 +88,7 @@ export class Timeline extends EventEmitter {
 				let startFrame = newCanv.toDataURL();
 				let matchCount = 0;
 				let startFrameTime = 0;
-				tempVideo.addEventListener('timeupdate', () => {
+				const onTimeUpdate = () => {
 					newCtx.drawImage(tempVideo, 0, 0, newCanv.width, newCanv.height);
 					if (tempTime === 0) startFrame = newCanv.toDataURL();
 
@@ -102,6 +102,7 @@ export class Timeline extends EventEmitter {
 						tempVideo.currentTime = tempTime;
 					} else if (frame !== startFrame && matchCount === 1) {
 						matchCount++;
+						tempVideo.removeEventListener('timeupdate', onTimeUpdate);
 						let framerate = roundTo(
 							tempVideo.duration / (tempTime - startFrameTime) / tempVideo.duration,
 							2,
@@ -113,7 +114,8 @@ export class Timeline extends EventEmitter {
 						tempTime += frameTime;
 						tempVideo.currentTime = tempTime;
 					}
-				});
+				};
+				tempVideo.addEventListener('timeupdate', onTimeUpdate);
 			}
 		};
 		tempVideo.src = this.video.src;
@@ -185,7 +187,7 @@ export class Timeline extends EventEmitter {
 					counter = startingFrame;
 				}
 				this.project.updateVisiblePoints();
-				if (this.project.track !== undefined && this.project.track !== null) {
+				if (this.project.track != null) {
 					if (this.project.track.points[this.currentFrame] !== undefined) {
 						this.project.track.unemphasizeAll();
 						this.project.track.points[this.currentFrame].emphasize();

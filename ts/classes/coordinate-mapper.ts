@@ -80,7 +80,7 @@ export class CoordinateMapper {
 	}
 
 	updateScale(): void {
-		if (this.project.axes !== undefined && this.project.axes !== null) {
+		if (this.project.axes != null) {
 			const moveTo = this.toUnscaled(this.project.axes.x, this.project.axes.y);
 			this.project.axes.shape.x = moveTo.x;
 			this.project.axes.shape.y = moveTo.y;
@@ -94,7 +94,7 @@ export class CoordinateMapper {
 				point.shape.y = point.circle.y = scaled.y;
 			}
 		}
-		if (this.project.scale !== undefined && this.project.scale !== null) {
+		if (this.project.scale != null) {
 			const moveTo = [
 				this.toUnscaled(this.project.scale.positions[0]),
 				this.toUnscaled(this.project.scale.positions[1]),

@@ -87,7 +87,7 @@ export class ProjectSerializer {
 			videoSpeed: this.project.videoSpeed,
 		};
 
-		if (this.project.scale !== null && this.project.scale !== undefined) {
+		if (this.project.scale != null) {
 			saveData.scale = {
 				size: this.project.scale.size.toString(),
 				color: this.project.scale.color,
@@ -98,14 +98,14 @@ export class ProjectSerializer {
 			};
 		}
 
-		if (this.project.axes !== null && this.project.axes !== undefined) {
+		if (this.project.axes != null) {
 			saveData.axes = {
 				position: { x: this.project.axes.x, y: this.project.axes.y, rotation: this.project.axes.theta },
 				color: this.project.axes.color,
 			};
 		}
 
-		if (this.project.track !== null && this.project.track !== undefined)
+		if (this.project.track != null)
 			saveData.activeTrack = this.project.track.uid;
 
 		saveData.tracks = {};
@@ -229,7 +229,7 @@ export class ProjectSerializer {
 					break;
 				}
 			}
-			if (data.activeTrack !== undefined && data.activeTrack !== null) {
+			if (data.activeTrack != null) {
 				this.project.switchTrack(data.activeTrack as string);
 			}
 		}

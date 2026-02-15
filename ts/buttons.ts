@@ -84,7 +84,7 @@ document.querySelectorAll('.help-button:not(.disabled)').forEach((el) => {
 });
 
 document.querySelector('#scale-button:not(.disabled)')?.addEventListener('click', () => {
-	if (master.scale !== undefined && master.scale !== null) {
+	if (master.scale != null) {
 		editScale
 			.push({
 				color: master.scale.color,

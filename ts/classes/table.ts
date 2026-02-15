@@ -148,7 +148,7 @@ export class Table {
 			this.data.sort((a, b) => {
 				const aVal = a[index];
 				const bVal = b[index];
-				if (aVal === null || bVal === null || aVal === undefined || bVal === undefined) return 0;
+				if (aVal == null || bVal == null) return 0;
 				if (aVal < bVal) return -1;
 				else if (aVal > bVal) return 1;
 				else return 0;

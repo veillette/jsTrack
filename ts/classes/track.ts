@@ -87,7 +87,7 @@ export class Track {
 		this.hidden = false;
 		this.selectedPoints = {};
 
-		if (this.project.scale === null || this.project.scale === undefined) {
+		if (this.project.scale == null) {
 			this.unit = 'px';
 		} else {
 			this.unit = this.project.scale.unit().toString();
@@ -178,7 +178,7 @@ export class Track {
 		const tempTrack = this;
 		this.stage.addEventListener('click', (e: createjs.MouseEvent) => {
 			const point = tempTrack.selectedPoint;
-			if (point !== null && point !== undefined) {
+			if (point != null) {
 				const mouseCoords = point.shape.globalToLocal(e.stageX, e.stageY);
 				if (mouseCoords.x < -1 || mouseCoords.x > 12 || mouseCoords.y < -1 || mouseCoords.y > 12) {
 					point.unselect();
@@ -187,7 +187,7 @@ export class Track {
 		});
 		this.listElement.container.addEventListener('click', () => {
 			let lastUid = '';
-			if (tempTrack.project.track !== null && tempTrack.project.track !== undefined) {
+			if (tempTrack.project.track != null) {
 				lastUid = tempTrack.project.track.uid;
 			}
 			tempTrack.project.change({
@@ -378,14 +378,14 @@ export class Track {
 	}
 
 	unselectAll(): void {
-		if (this.selectedPoint !== null && this.selectedPoint !== undefined) {
+		if (this.selectedPoint != null) {
 			this.selectedPoint.unselect();
 		}
 		this.selectedPoint = null;
 	}
 
 	unemphasizeAll(): void {
-		if (this.emphasizedPoint !== null && this.emphasizedPoint !== undefined) {
+		if (this.emphasizedPoint != null) {
 			this.emphasizedPoint.unemphasize();
 		}
 		this.emphasizedPoint = null;

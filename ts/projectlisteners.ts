@@ -56,7 +56,7 @@ master.timeline.on('seek, timingUpdate', function (this: typeof master.timeline)
 	this.project.updateVisiblePoints();
 	frameArrows.update();
 	posText.text = `Frame: ${master.timeline.currentFrame}, X: ${stage.mouseX}, Y: ${stage.mouseY}`;
-	if (this.project.track !== null && this.project.track !== undefined) {
+	if (this.project.track != null) {
 		this.project.track.unemphasizeAll();
 		if (this.project.track.points[this.project.timeline.currentFrame] !== undefined) {
 			this.project.track.points[this.project.timeline.currentFrame].emphasize();

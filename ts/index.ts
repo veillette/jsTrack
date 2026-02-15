@@ -4,6 +4,7 @@
  */
 
 import { CANVAS_BOTTOM_OFFSET_PX, SIDEBAR_BREAKPOINT_PX } from './constants';
+import { hideLoader } from './functions';
 import {
 	background,
 	background2,
@@ -139,6 +140,15 @@ video.addEventListener('playing', () => {
 	video.style.display = 'none';
 });
 
+video.addEventListener('error', () => {
+	const error = video.error;
+	const message = error ? `Video failed to load: ${error.message}` : 'Video failed to load.';
+	console.error(message);
+	const dropText = document.getElementById('file-drop-area')?.querySelector('.text');
+	if (dropText) dropText.textContent = message;
+	hideLoader();
+});
+
 stage.on('stagemousemove', (e: createjs.MouseEvent) => {
 	const coords = e.target.stage.globalToLocal(e.stageX, e.stageY);
 
@@ -150,7 +160,7 @@ stage.on('stagemousemove', (e: createjs.MouseEvent) => {
 });
 
 stage.on('click', (e: createjs.MouseEvent) => {
-	if (master.track !== null && master.track !== undefined) {
+	if (master.track != null) {
 		if (master.track.state.mode === 'add') {
 			const frame = master.timeline.current();
 			if (frame === false) return;

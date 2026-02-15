@@ -270,17 +270,17 @@ export class Project extends EventEmitter {
 
 		this.state.modeChange(function (this: Project, mode: string) {
 			if (mode === 'add') {
-				if (this.axes !== null && this.axes !== undefined) {
+				if (this.axes != null) {
 					this.axes.hide();
 				}
-				if (this.scale !== null && this.scale !== undefined) {
+				if (this.scale != null) {
 					this.scale.hide();
 				}
 			} else {
-				if (this.axes !== null && this.axes !== undefined) {
+				if (this.axes != null) {
 					this.axes.show();
 				}
-				if (this.scale !== null && this.scale !== undefined) {
+				if (this.scale != null) {
 					this.scale.show();
 				}
 			}
@@ -428,8 +428,8 @@ export class Project extends EventEmitter {
 					}
 				}
 			}
-			if (this.track !== undefined && this.track !== null) {
-				if (this.track.emphasizedPoint !== null && this.track.emphasizedPoint !== undefined) {
+			if (this.track != null) {
+				if (this.track.emphasizedPoint != null) {
 					this.track.emphasizedPoint.emphasize();
 				}
 			}
@@ -444,7 +444,7 @@ export class Project extends EventEmitter {
 			const track = this.trackList[uid];
 			track.listElement.container.remove();
 		}
-		if (this.scale !== null && this.scale !== undefined) this.scale.textElement.remove();
+		if (this.scale != null) this.scale.textElement.remove();
 
 		this.handsOnTable.destroy();
 		return this;
@@ -573,7 +573,7 @@ export class Project extends EventEmitter {
 
 	switchTrack(uid: string): this {
 		if (this.trackList[uid] !== undefined) {
-			if (this.track !== null && this.track !== undefined) {
+			if (this.track != null) {
 				this.track.unselectAll();
 				this.track.unemphasizeAll();
 			}
@@ -597,7 +597,7 @@ export class Project extends EventEmitter {
 		for (const uid in this.trackList) {
 			const track = this.trackList[uid];
 
-			if (this.scale === null || this.scale === undefined) {
+			if (this.scale == null) {
 				track.unit = 'px';
 			} else {
 				track.scale = this.scale;
@@ -608,7 +608,7 @@ export class Project extends EventEmitter {
 				}
 			}
 		}
-		if (this.track !== null && this.track !== undefined) {
+		if (this.track != null) {
 			let tableData: TableRowData[] = this.track.export().points.scaled;
 			if (tableData.length === 0) tableData = [{ '': '' }];
 			this.track.table.newData(tableData, true, true);
