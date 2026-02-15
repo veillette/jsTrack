@@ -264,18 +264,6 @@ interface DragulaOptions {
 
 declare function dragula(containers: HTMLElement[], options?: DragulaOptions): DragulaInstance;
 
-// ─── UndoManager ───
-
-declare class UndoManager {
-	add(command: { undo: () => void; redo: () => void }): void;
-	undo(): void;
-	redo(): void;
-	clear(): void;
-	hasUndo(): boolean;
-	hasRedo(): boolean;
-	getIndex(): number;
-}
-
 // ─── keyboardJS ───
 
 interface KeyboardJSEvent {

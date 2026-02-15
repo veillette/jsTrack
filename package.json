@@ -16,5 +16,8 @@
     "@biomejs/biome": "^2.3.15",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "undo-manager": "^1.1.1"
   }
 }

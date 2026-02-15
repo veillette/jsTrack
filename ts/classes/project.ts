@@ -8,6 +8,8 @@
  * any later version.
  */
 
+import type { UndoManagerInstance } from 'undo-manager';
+import UndoManager from 'undo-manager';
 import { roundTo } from '../functions';
 import { Axes, type Coordinate } from './axes';
 import { CoordinateMapper } from './coordinate-mapper';
@@ -71,7 +73,7 @@ export class Project extends EventEmitter {
 	trackList: Record<string, Track>;
 	deletedTracks: Record<string, Track>;
 	axesList: Axes[];
-	undoManager: UndoManager;
+	undoManager: UndoManagerInstance;
 	saveIndex: number;
 	backUpIndex: number;
 	viewPoints: { forward: number; backward: number };
