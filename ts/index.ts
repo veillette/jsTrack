@@ -3,6 +3,7 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import { CANVAS_BOTTOM_OFFSET_PX, SIDEBAR_BREAKPOINT_PX } from './constants';
 import {
 	background,
 	background2,
@@ -19,7 +20,7 @@ import {
 import { frameArrows, scrubber, scrubberCanv, scrubberLine, updateScrubber } from './scrubber';
 
 export function drawGraphics(_initialDraw = false): void {
-	if (window.innerWidth < 1000) {
+	if (window.innerWidth < SIDEBAR_BREAKPOINT_PX) {
 		if (!sidebar.classList.contains('changed')) {
 			sidebar.classList.remove('normal');
 			sidebar.classList.add('hidden');
@@ -42,7 +43,7 @@ export function drawGraphics(_initialDraw = false): void {
 	}
 
 	const width = window.innerWidth - sidebar.offsetWidth;
-	const height = window.innerHeight - 50;
+	const height = window.innerHeight - CANVAS_BOTTOM_OFFSET_PX;
 
 	const sidebarVis = document.getElementById('sidebar-visibility');
 	if (sidebarVis) sidebarVis.style.right = `${sidebar.offsetWidth}px`;

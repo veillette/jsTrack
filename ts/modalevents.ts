@@ -3,6 +3,7 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import { GAPI_POLL_INTERVAL_MS, GAPI_TIMEOUT_MS, SCALE_EDIT_FOCUS_DELAY_MS } from './constants';
 import { hideLoader, showLoader } from './functions';
 import {
 	CUSTOM_EXTENSION,
@@ -55,7 +56,7 @@ saveProject
 		const fileUrl = URL.createObjectURL(master.videoFile);
 		JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
 			if (err) {
-				console.log(err);
+				console.error(err);
 			}
 
 			let filename = modalData.filename || '';
@@ -76,7 +77,7 @@ saveProject
 					hideLoader();
 				},
 				(err: Error) => {
-					console.log(err);
+					console.error(err);
 				},
 			);
 		});
@@ -86,7 +87,13 @@ saveProject
 	.on('create', function (this: typeof saveProject) {
 		const button = document.getElementById(`${this.id}_button-saveDrive`) as HTMLButtonElement | null;
 		if (button) button.disabled = true;
+		const gapiPollStart = Date.now();
 		const checkLoaded = setInterval(() => {
+			if (Date.now() - gapiPollStart > GAPI_TIMEOUT_MS) {
+				clearInterval(checkLoaded);
+				console.error('Google API failed to load within timeout');
+				return;
+			}
 			try {
 				if (typeof gapi !== 'undefined') {
 					if (gapi.client !== undefined) {
@@ -106,7 +113,7 @@ saveProject
 									const fileUrl = URL.createObjectURL(master.videoFile);
 									JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
 										if (err) {
-											console.log(err);
+											console.error(err);
 										}
 
 										const exported = this.export();
@@ -133,8 +140,10 @@ saveProject
 											(zipFile: Blob) => {
 												const reader = new FileReader();
 												reader.onload = () => {
+													const result = reader.result;
+													if (!(result instanceof ArrayBuffer)) return;
 													callback(
-														reader.result as unknown as ArrayBuffer,
+														result,
 														filename,
 														(_success: boolean) => {
 															hideLoader();
@@ -145,7 +154,7 @@ saveProject
 												reader.readAsArrayBuffer(zipFile);
 											},
 											(err: Error) => {
-												console.log(err);
+												console.error(err);
 											},
 										);
 									});
@@ -156,10 +165,10 @@ saveProject
 					}
 				}
 			} catch {
-				console.log('Google could not be loaded.');
+				console.error('Google API could not be loaded.');
 				clearInterval(checkLoaded);
 			}
-		}, 400);
+		}, GAPI_POLL_INTERVAL_MS);
 	})
 	.on('cancel', function () {
 		this.hide().clear();
@@ -249,7 +258,7 @@ newScale
 					scale.textElement.dispatchEvent(new Event('startEditing'));
 					scale.textElement.value = '';
 					scale.textElement.focus();
-				}, 200);
+				}, SCALE_EDIT_FOCUS_DELAY_MS);
 				stage.cursor = 'default';
 				master.state.default();
 				scaleClickCounter++;

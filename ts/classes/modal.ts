@@ -77,7 +77,6 @@ export class Modal extends EventEmitter {
 			'#FF0099',
 			'#CC00FF',
 			'#9D00FF',
-			'#CC00FF',
 			'#6E0DD0',
 			'#9900FF',
 		];

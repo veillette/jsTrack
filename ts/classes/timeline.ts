@@ -8,6 +8,7 @@
  * any later version.
  */
 
+import { FRAMERATE_DETECTION_STEP } from '../constants';
 import { roundTo } from '../functions';
 import { EventEmitter } from './event-emitter';
 import { Frame } from './frame';
@@ -67,7 +68,7 @@ export class Timeline extends EventEmitter {
 	}
 
 	detectFrameRate(callback: ((fps: number) => void) | null = null): void {
-		const frameTime = 1 / 240;
+		const frameTime = FRAMERATE_DETECTION_STEP;
 		let frame: string | null = null;
 		const tempVideo = document.createElement('video');
 		let firstLoad = true;
@@ -85,7 +86,6 @@ export class Timeline extends EventEmitter {
 				let tempTime = 0;
 				tempVideo.currentTime = tempTime;
 				let startFrame = newCanv.toDataURL();
-				console.log('Detecting Framerate...');
 				let matchCount = 0;
 				let startFrameTime = 0;
 				tempVideo.addEventListener('timeupdate', () => {
@@ -108,7 +108,6 @@ export class Timeline extends EventEmitter {
 						);
 
 						if (platform.name === 'Firefox' && framerate === 34.29) framerate = 30;
-						console.log(`${framerate} FPS`);
 						if (callback !== null) callback(framerate);
 					} else {
 						tempTime += frameTime;

@@ -61,7 +61,7 @@ function projectBackup(): void {
 	const fileUrl = URL.createObjectURL(master.videoFile);
 	JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, videoFile: ArrayBuffer) => {
 		if (err) {
-			console.log(err);
+			console.error(err);
 			success = false;
 			updateBackup(success);
 		}
@@ -125,7 +125,7 @@ function projectBackup(): void {
 									};
 								},
 								(err: Error) => {
-									console.log(err);
+									console.error(err);
 									success = false;
 									updateBackup(success);
 								},
@@ -168,7 +168,7 @@ function projectBackup(): void {
 				};
 			},
 			(err: Error) => {
-				console.log(err);
+				console.error(err);
 				success = false;
 				updateBackup(success);
 			},

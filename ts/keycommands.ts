@@ -3,6 +3,7 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import { ARROW_KEY_STEP_PX } from './constants';
 import { canvas, master, saveProject } from './globals';
 import { drawGraphics } from './index';
 
@@ -53,16 +54,16 @@ keyboardJS.on(['up', 'down', 'right', 'left'], (e: KeyboardJSEvent) => {
 
 	switch (e.key) {
 		case 'ArrowLeft':
-			newPos.x += 20;
+			newPos.x += ARROW_KEY_STEP_PX;
 			break;
 		case 'ArrowRight':
-			newPos.x -= 20;
+			newPos.x -= ARROW_KEY_STEP_PX;
 			break;
 		case 'ArrowUp':
-			newPos.y += 20;
+			newPos.y += ARROW_KEY_STEP_PX;
 			break;
 		case 'ArrowDown':
-			newPos.y -= 20;
+			newPos.y -= ARROW_KEY_STEP_PX;
 			break;
 	}
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import { RESIZE_DEBOUNCE_MS } from './constants';
 import { showLoader } from './functions';
 import { sidebar } from './globals';
 import { handleFiles } from './handlefiles';
@@ -82,7 +83,7 @@ panelMove
 let resizeTimer: ReturnType<typeof setTimeout>;
 window.addEventListener('resize', () => {
 	clearTimeout(resizeTimer);
-	resizeTimer = setTimeout(drawGraphics, 250);
+	resizeTimer = setTimeout(drawGraphics, RESIZE_DEBOUNCE_MS);
 	const vis = document.getElementById('sidebar-visibility');
 	if (vis) vis.style.right = `${sidebar.offsetWidth}px`;
 });

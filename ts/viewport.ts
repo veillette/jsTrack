@@ -3,6 +3,7 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import { ZOOM_SENSITIVITY_DIVISOR } from './constants';
 import { background2, canvas, master } from './globals';
 
 let originalCoords = { x: 0, y: 0 };
@@ -55,7 +56,8 @@ master.addBackground.on('pressmove', (e: createjs.MouseEvent) => {
 canvas.addEventListener('wheel', (e: WheelEvent) => {
 	e.preventDefault();
 	if (master.state.mode === 'positioning') {
-		if (master.positioning.zoom > 0.01 || Math.sign(e.deltaY) === -1) master.positioning.zoom -= e.deltaY / 25;
+		if (master.positioning.zoom > 0.01 || Math.sign(e.deltaY) === -1)
+			master.positioning.zoom -= e.deltaY / ZOOM_SENSITIVITY_DIVISOR;
 
 		if (master.positioning.zoom <= 0.01) master.positioning.zoom = 0.01;
 	}

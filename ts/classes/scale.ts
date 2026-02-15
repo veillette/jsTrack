@@ -362,9 +362,8 @@ export class Scale {
 	}
 
 	convert(pixels: number, unit: MathJsUnit = math.unit(this.unit())): { number: number } {
-		const mathUnit = math
-			.unit(math.multiply(pixels, math.divide(this.size, this.length) as number) as unknown as string)
-			.to(unit.toString());
+		const scaled = math.multiply(pixels, math.divide(this.size, this.length) as number);
+		const mathUnit = math.unit(String(scaled)).to(unit.toString());
 		return { number: mathUnit.toNumber(unit.toString()) };
 	}
 }
