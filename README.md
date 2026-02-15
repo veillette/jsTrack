@@ -24,7 +24,7 @@ A web-based version of the [Tracker](https://physlets.org/tracker/) physics vide
 ### Install & Build
 
 ```bash
-git clone https://github.com/veilletete/jsTrack.git
+git clone https://github.com/veillette/jsTrack.git
 cd jsTrack
 npm install
 npm run build
