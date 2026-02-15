@@ -8,6 +8,7 @@
  * any later version.
  */
 
+import type Handsontable from 'handsontable';
 import type { UndoManagerInstance } from 'undo-manager';
 import UndoManager from 'undo-manager';
 import { roundTo } from '../functions';
@@ -295,16 +296,12 @@ export class Project extends EventEmitter {
 				case 'add':
 				case 'newScale':
 					this.stage.addChild(this.addBackground);
-					switch (platform.name) {
-						case 'Firefox':
-							this.stage.cursor = "url('icons/add_point.png') 16 16, copy";
-							break;
-						case 'Chrome':
-							this.stage.cursor = "url('icons/add_point.png') 8 8, copy";
-							break;
-						default:
-							this.stage.cursor = 'copy';
-							break;
+					if (navigator.userAgent.includes('Firefox')) {
+						this.stage.cursor = "url('icons/add_point.png') 16 16, copy";
+					} else if (navigator.userAgent.includes('Chrome')) {
+						this.stage.cursor = "url('icons/add_point.png') 8 8, copy";
+					} else {
+						this.stage.cursor = 'copy';
 					}
 					break;
 				case 'positioning':

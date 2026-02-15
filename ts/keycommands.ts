@@ -3,6 +3,7 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import keyboardJS from 'keyboardjs';
 import { ARROW_KEY_STEP_PX } from './constants';
 import { canvas, master, saveProject } from './globals';
 import { drawGraphics } from './index';

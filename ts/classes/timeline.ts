@@ -108,7 +108,7 @@ export class Timeline extends EventEmitter {
 							2,
 						);
 
-						if (platform.name === 'Firefox' && framerate === 34.29) framerate = 30;
+						if (navigator.userAgent.includes('Firefox') && framerate === 34.29) framerate = 30;
 						if (callback !== null) callback(framerate);
 					} else {
 						tempTime += frameTime;

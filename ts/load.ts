@@ -3,17 +3,15 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import JSZip from 'jszip';
+import keyboardJS from 'keyboardjs';
 import { hideLoader } from './functions';
 import { master } from './globals';
 
-/** Wraps JSZipUtils.getBinaryContent in a Promise. */
-export function fetchBinaryContent(url: string): Promise<ArrayBuffer> {
-	return new Promise((resolve, reject) => {
-		JSZipUtils.getBinaryContent(url, (err: Error | null, data: ArrayBuffer) => {
-			if (err) reject(err);
-			else resolve(data);
-		});
-	});
+/** Fetches binary content from a URL as an ArrayBuffer. */
+export async function fetchBinaryContent(url: string): Promise<ArrayBuffer> {
+	const response = await fetch(url);
+	return response.arrayBuffer();
 }
 
 export function loadVideo(file: File | Blob, callback: (() => void) | null = null): void {
@@ -30,10 +28,10 @@ export async function loadProject(file: File, callback: (() => void) | null = nu
 	const zipData = await JSZip.loadAsync(data);
 
 	if (zipData.files['video.mp4'] !== undefined) {
-		const videoBlob = await zipData.file('video.mp4').async('blob');
+		const videoBlob = await zipData.file('video.mp4')?.async('blob');
 		loadVideo(videoBlob as Blob, async () => {
 			if (zipData.files['meta.json'] !== undefined) {
-				const projectJson = await zipData.file('meta.json').async('text');
+				const projectJson = await zipData.file('meta.json')?.async('text');
 				master.load(JSON.parse(projectJson));
 				hideLoader();
 				master.saved = true;

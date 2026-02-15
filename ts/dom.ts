@@ -3,6 +3,9 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import dragula from 'dragula';
+import 'dragula/dist/dragula.css';
+import interact from 'interactjs';
 import { RESIZE_DEBOUNCE_MS } from './constants';
 import { showLoader } from './functions';
 import { sidebar } from './globals';

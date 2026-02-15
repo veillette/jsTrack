@@ -8,12 +8,13 @@
  * any later version.
  */
 
+import { divide, format, multiply, type PhysicsUnit, unit } from '../units';
 import type { Coordinate } from './axes';
 import type { Project } from './project';
 
 interface ScaleProcessedValue {
 	textValue: string;
-	size: MathJsUnit;
+	size: PhysicsUnit;
 }
 
 export class Scale {
@@ -23,7 +24,7 @@ export class Scale {
 	nodeSize: number;
 	positions: [Coordinate, Coordinate];
 	textValue: string;
-	size: MathJsUnit;
+	size: PhysicsUnit;
 	hitArea: createjs.Shape;
 	nodes: [createjs.Shape, createjs.Shape];
 	length: number;
@@ -59,16 +60,16 @@ export class Scale {
 			{ x: x2, y: y2 },
 		];
 		if (size == null) {
-			this.textValue = math.unit('1m').toString();
-			this.size = math.unit('1m');
+			this.textValue = unit('1m').toString();
+			this.size = unit('1m');
 		} else {
 			const valueProcessed = this.processValue(size);
 			if (valueProcessed !== false) {
 				this.textValue = valueProcessed.textValue;
 				this.size = valueProcessed.size;
 			} else {
-				this.textValue = math.unit('1m').toString();
-				this.size = math.unit('1m');
+				this.textValue = unit('1m').toString();
+				this.size = unit('1m');
 			}
 		}
 
@@ -153,7 +154,7 @@ export class Scale {
 				this.textElement.classList.add('editing');
 				this.textElement.classList.remove('not-editing');
 				this.textElement.readOnly = false;
-				this.textElement.value = math.format(this.size).toString();
+				this.textElement.value = format(this.size).toString();
 				this.update();
 			});
 		});
@@ -257,11 +258,11 @@ export class Scale {
 	}
 
 	/**
-	 * Parses a user-entered scale string into a math.js unit value.
+	 * Parses a user-entered scale string into a unit value.
 	 *
 	 * Supports two formats:
-	 *   - Simple unit: `"5 m"`, `"2.3 ft"` → parsed directly via `math.unit()`
-	 *   - Conversion: `"5 m > cm"` → parsed as `math.unit("5 m").to("cm")`
+	 *   - Simple unit: `"5 m"`, `"2.3 ft"` → parsed directly via `unit()`
+	 *   - Conversion: `"5 m > cm"` → parsed as `unit("5 m").to("cm")`
 	 *
 	 * @param value - The raw string from the scale text input
 	 * @returns The parsed size and display text, or `false` if parsing fails
@@ -272,12 +273,12 @@ export class Scale {
 			try {
 				if (value.split('>').length > 1) {
 					const split = value.split('>');
-					math.unit(split[0].trim());
-					returnData.size = math.unit(split[0].trim()).to(split[split.length - 1].trim());
-					returnData.textValue = math.format(returnData.size, { notation: 'auto', precision: 6 }).toString();
+					unit(split[0].trim());
+					returnData.size = unit(split[0].trim()).to(split[split.length - 1].trim());
+					returnData.textValue = format(returnData.size, { notation: 'auto', precision: 6 }).toString();
 				} else {
-					returnData.size = math.unit(value);
-					returnData.textValue = math.format(math.unit(value), { notation: 'auto', precision: 6 }).toString();
+					returnData.size = unit(value);
+					returnData.textValue = format(unit(value), { notation: 'auto', precision: 6 }).toString();
 				}
 			} catch {
 				return false;
@@ -378,12 +379,12 @@ export class Scale {
 	 * of the scale line). The result is then converted to the requested unit.
 	 *
 	 * @param pixels - Distance in video pixel coordinates
-	 * @param unit - Target unit (defaults to the scale's own unit)
+	 * @param targetUnit - Target unit (defaults to the scale's own unit)
 	 * @returns Object with `number` property containing the converted value
 	 */
-	convert(pixels: number, unit: MathJsUnit = math.unit(this.unit())): { number: number } {
-		const scaled = math.multiply(pixels, math.divide(this.size, this.length) as number);
-		const mathUnit = math.unit(String(scaled)).to(unit.toString());
-		return { number: mathUnit.toNumber(unit.toString()) };
+	convert(pixels: number, targetUnit: PhysicsUnit = unit(this.unit())): { number: number } {
+		const scaled = multiply(pixels, divide(this.size, this.length) as number);
+		const converted = unit(String(scaled)).to(targetUnit.toString());
+		return { number: converted.toNumber(targetUnit.toString()) };
 	}
 }

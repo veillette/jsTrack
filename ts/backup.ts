@@ -3,6 +3,7 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import JSZip from 'jszip';
 import { confirmModal } from './classes/modal';
 import { deleteStorage, getStorage, setStorage } from './compatibility';
 import { dataURLtoBlob, hideLoader, showLoader } from './functions';
@@ -182,92 +183,55 @@ if (backupRaw) {
 				if (backupInfo.video) {
 					showLoader();
 					const file = dataURLtoBlob(backupInfo.video);
-
 					const fileUrl = URL.createObjectURL(file);
-					JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
-						if (err) throw err;
-
-						JSZip.loadAsync(data).then((zipData: JSZip) => {
-							zipData
-								.file('video.mp4')
-								.async('blob')
-								.then((videoBlob: Blob) => {
-									loadVideo(videoBlob, () => {
-										if (backupInfo.data) {
-											const dataFile = dataURLtoBlob(backupInfo.data);
-
-											const dataFileUrl = URL.createObjectURL(dataFile);
-											JSZipUtils.getBinaryContent(
-												dataFileUrl,
-												(err: Error | null, innerData: ArrayBuffer) => {
-													if (err) throw err;
-
-													JSZip.loadAsync(innerData).then((innerZipData: JSZip) => {
-														innerZipData
-															.file('meta.json')
-															.async('text')
-															.then((projectJson: string) => {
-																master.load(JSON.parse(projectJson));
-																hideLoader();
-																hideLaunchModal();
-																master.saved = true;
-																master.trigger('created');
-															});
-													});
-												},
-											);
-										}
-									});
-								});
-						});
+					const data = await fetchBinaryContent(fileUrl);
+					const zipData = await JSZip.loadAsync(data);
+					const videoBlob = await zipData.file('video.mp4')?.async('blob');
+					loadVideo(videoBlob, async () => {
+						if (backupInfo.data) {
+							const dataFile = dataURLtoBlob(backupInfo.data);
+							const dataFileUrl = URL.createObjectURL(dataFile);
+							const innerData = await fetchBinaryContent(dataFileUrl);
+							const innerZipData = await JSZip.loadAsync(innerData);
+							const projectJson = await innerZipData.file('meta.json')?.async('text');
+							master.load(JSON.parse(projectJson));
+							hideLoader();
+							hideLaunchModal();
+							master.saved = true;
+							master.trigger('created');
+						}
 					});
 				} else if (backupInfo.data) {
 					const file = dataURLtoBlob(backupInfo.data);
 					const fileUrl = URL.createObjectURL(file);
-					JSZipUtils.getBinaryContent(fileUrl, (err: Error | null, data: ArrayBuffer) => {
-						if (err) throw err;
-
-						JSZip.loadAsync(data).then((zipData: JSZip) => {
-							zipData
-								.file('meta.json')
-								.async('text')
-								.then(async (projectJson: string) => {
-									let videoName = '';
-									let rawVideoName = '';
-									if (backupInfo.videoName) {
-										videoName = `(${backupInfo.videoName}) `;
-										rawVideoName = backupInfo.videoName;
-									}
-									if (
-										await confirmModal(
-											'There is no video saved in this backup, you will need to be able to access the original video ' +
-												videoName +
-												'to load it yourself. Would you like to continue?',
-											'Missing Video',
-										)
-									) {
-										const dropText = document
-											.getElementById('file-drop-area')
-											?.querySelector('.text');
-										if (dropText)
-											dropText.textContent = 'Drag the video here to recover your project, or';
-										setDataLoaded({
-											name: rawVideoName,
-											data: JSON.parse(projectJson),
-										});
-									} else {
-										if (
-											await confirmModal(
-												'Would you like to remove this backup from storage?',
-												'Remove Backup',
-											)
-										) {
-											deleteStorage('backup');
-										}
-									}
-								});
+					const data = await fetchBinaryContent(fileUrl);
+					const zipData = await JSZip.loadAsync(data);
+					const projectJson = await zipData.file('meta.json')?.async('text');
+					let videoName = '';
+					let rawVideoName = '';
+					if (backupInfo.videoName) {
+						videoName = `(${backupInfo.videoName}) `;
+						rawVideoName = backupInfo.videoName;
+					}
+					if (
+						await confirmModal(
+							'There is no video saved in this backup, you will need to be able to access the original video ' +
+								videoName +
+								'to load it yourself. Would you like to continue?',
+							'Missing Video',
+						)
+					) {
+						const dropText = document.getElementById('file-drop-area')?.querySelector('.text');
+						if (dropText) dropText.textContent = 'Drag the video here to recover your project, or';
+						setDataLoaded({
+							name: rawVideoName,
+							data: JSON.parse(projectJson),
 						});
-					});
+					} else {
+						if (await confirmModal('Would you like to remove this backup from storage?', 'Remove Backup')) {
+							deleteStorage('backup');
+						}
+					}
 				} else {
 					if (
 						await confirmModal(

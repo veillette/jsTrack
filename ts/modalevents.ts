@@ -3,6 +3,9 @@
  * Copyright (C) 2018 Luca Demian
  */
 
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
+import * as XLSX from 'xlsx';
 import type { Modal, ModalExportData } from './classes/modal';
 import { GAPI_POLL_INTERVAL_MS, GAPI_TIMEOUT_MS, SCALE_EDIT_FOCUS_DELAY_MS } from './constants';
 import { hideLoader, showLoader } from './functions';
@@ -122,7 +125,7 @@ saveProject
 										const data = await fetchBinaryContent(fileUrl);
 
 										const exported = this.export();
-										let filename = (exported && exported.filename) || '';
+										let filename = exported?.filename || '';
 										if (filename.length === 0) {
 											filename = `${master.name.toLowerCase().replace(' ', '_')}-${Date.now()}.${CUSTOM_EXTENSION}`;
 										} else if (filename.split('.').pop() !== CUSTOM_EXTENSION)

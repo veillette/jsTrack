@@ -3,6 +3,8 @@
  * All modules import from here to access shared state.
  */
 
+import Handsontable from 'handsontable';
+import 'handsontable/dist/handsontable.full.css';
 import { Modal } from './classes/modal';
 import { Project } from './classes/project';
 import { Timeline } from './classes/timeline';
