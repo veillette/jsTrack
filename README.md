@@ -36,7 +36,7 @@ This runs Vite in watch mode — edit TypeScript files in `ts/` and the bundle r
 
 ### Google Drive Integration
 
-To use Drive features, serve the project over HTTP (e.g., `npx http-server`) and access via `http://localhost`. Set up API keys by following the [Google Drive API quickstart](https://developers.google.com/drive/api/v3/quickstart/js), then update the keys in `ts/drive.ts` and `index.html`.
+To use Drive features, serve the project over HTTP (e.g., `npx http-server`) and access via `http://localhost`. Set up API keys and OAuth by following the [Google Drive Picker guide](https://developers.google.com/drive/picker/guides/overview), then update `GOOGLE_API_KEY`, `GOOGLE_CLIENT_ID`, and `GOOGLE_APP_ID` in `ts/globals.ts`.
 
 ## Project Structure
 

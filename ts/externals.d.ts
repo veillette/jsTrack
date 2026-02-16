@@ -169,8 +169,29 @@ declare namespace gapi {
 	}
 }
 
+// google.accounts.oauth2 (GIS) - @types/gsi only has accounts.id
+declare namespace google.accounts.oauth2 {
+	interface TokenClientConfig {
+		client_id: string;
+		scope: string;
+		callback?: (response: TokenResponse) => void;
+	}
+	interface TokenResponse {
+		access_token: string;
+		error?: string;
+	}
+	interface OverridableTokenClientConfig {
+		prompt?: 'consent' | '';
+	}
+	interface TokenClient {
+		callback: (response: TokenResponse) => void;
+		requestAccessToken(overrideConfig?: OverridableTokenClientConfig): void;
+	}
+	function initTokenClient(config: TokenClientConfig): TokenClient;
+	function revoke(token: string, done?: (response: { successful: boolean; error?: string }) => void): void;
+}
+
 declare namespace google {
-	function load(api: string, version: string, options: { callback: () => void }): void;
 	namespace picker {
 		enum ViewId {
 			DOCS,

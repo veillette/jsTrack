@@ -7,7 +7,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
 import type { Modal, ModalExportData } from './classes/modal';
-import { GAPI_POLL_INTERVAL_MS, GAPI_TIMEOUT_MS, SCALE_EDIT_FOCUS_DELAY_MS } from './constants';
+import { SCALE_EDIT_FOCUS_DELAY_MS } from './constants';
 import { hideLoader, showLoader } from './functions';
 import {
 	CUSTOM_EXTENSION,
@@ -17,8 +17,6 @@ import {
 	editScale,
 	editTrack,
 	exportData,
-	GOOGLE_API_KEY,
-	GOOGLE_CLIENT_ID,
 	master,
 	newProject,
 	newScale,
@@ -26,6 +24,7 @@ import {
 	saveProject,
 	stage,
 } from './globals';
+import { initGoogleApis, isGoogleApisReady } from './googleAuth';
 import { fetchBinaryContent } from './load';
 import { DriveUpload } from './saveDrive';
 
@@ -97,67 +96,58 @@ saveProject
 	.on('create', function (this: typeof saveProject) {
 		const button = document.getElementById(`${this.id}_button-saveDrive`) as HTMLButtonElement | null;
 		if (button) button.disabled = true;
-		const gapiPollStart = Date.now();
-		const checkLoaded = setInterval(() => {
-			if (Date.now() - gapiPollStart > GAPI_TIMEOUT_MS) {
-				clearInterval(checkLoaded);
-				console.error('Google API failed to load within timeout');
-				return;
-			}
-			try {
-				if (typeof gapi !== 'undefined') {
-					if (gapi.client !== undefined) {
-						const logoutEl = document.getElementById('logout-button');
-						const saveDriveBtn = document.getElementById(
-							`${this.id}_button-saveDrive`,
-						) as HTMLButtonElement | null;
-						if (saveDriveBtn && logoutEl) {
-							new DriveUpload({
-								apiKey: GOOGLE_API_KEY,
-								clientId: GOOGLE_CLIENT_ID,
-								buttonEl: saveDriveBtn,
-								logoutEl: logoutEl,
-								getFile: async (callback) => {
-									if (!master.videoFile) return;
-									showLoader();
-									try {
-										const fileUrl = URL.createObjectURL(master.videoFile);
-										const data = await fetchBinaryContent(fileUrl);
+		initGoogleApis()
+			.then(() => {
+				if (isGoogleApisReady()) {
+					const logoutEl = document.getElementById('logout-button');
+					const saveDriveBtn = document.getElementById(
+						`${this.id}_button-saveDrive`,
+					) as HTMLButtonElement | null;
+					if (saveDriveBtn && logoutEl) {
+						new DriveUpload({
+							buttonEl: saveDriveBtn,
+							logoutEl: logoutEl,
+							getFile: async (callback) => {
+								if (!master.videoFile) return;
+								showLoader();
+								try {
+									const fileUrl = URL.createObjectURL(master.videoFile);
+									const data = await fetchBinaryContent(fileUrl);
 
-										const exported = this.export();
-										let filename = exported?.filename || '';
-										if (filename.length === 0) {
-											filename = `${master.name.toLowerCase().replace(' ', '_')}-${Date.now()}.${CUSTOM_EXTENSION}`;
-										} else if (filename.split('.').pop() !== CUSTOM_EXTENSION)
-											filename += `.${CUSTOM_EXTENSION}`;
+									const exported = this.export();
+										let filename =
+											exported && typeof exported === 'object'
+												? (exported as Record<string, string>).filename ?? ''
+												: '';
+									if (filename.length === 0) {
+										filename = `${master.name.toLowerCase().replace(' ', '_')}-${Date.now()}.${CUSTOM_EXTENSION}`;
+									} else if (filename.split('.').pop() !== CUSTOM_EXTENSION)
+										filename += `.${CUSTOM_EXTENSION}`;
 
-										const projectInfo = JSON.stringify(master.save());
-										const zip = new JSZip();
-										zip.file('video.mp4', data, { binary: true }).file('meta.json', projectInfo);
+									const projectInfo = JSON.stringify(master.save());
+									const zip = new JSZip();
+									zip.file('video.mp4', data, { binary: true }).file('meta.json', projectInfo);
 
-										const zipFile = await zip.generateAsync({
-											type: 'blob',
-											mimeType: 'application/octet-stream',
-										});
-										const arrayBuffer = await zipFile.arrayBuffer();
-										callback(arrayBuffer, filename, (_success: boolean) => {
-											hideLoader();
-											this.hide();
-										});
-									} catch (err) {
-										console.error(err);
-									}
-								},
-							});
-						}
-						clearInterval(checkLoaded);
+									const zipFile = await zip.generateAsync({
+										type: 'blob',
+										mimeType: 'application/octet-stream',
+									});
+									const arrayBuffer = await zipFile.arrayBuffer();
+									callback(arrayBuffer, filename, (_success: boolean) => {
+										hideLoader();
+										this.hide();
+									});
+								} catch (err) {
+									console.error(err);
+								}
+							},
+						});
 					}
 				}
-			} catch {
-				console.error('Google API could not be loaded.');
-				clearInterval(checkLoaded);
-			}
-		}, GAPI_POLL_INTERVAL_MS);
+			})
+			.catch(() => {
+				console.error('Google API failed to load within timeout');
+			});
 	})
 	.on('cancel', function (this: Modal) {
 		this.hide().clear();

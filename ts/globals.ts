@@ -31,7 +31,10 @@ export const EXPORT_FORMATS = [
 export const CUSTOM_EXTENSION = 'trackts';
 export const VIDEO_CONVERTOR = 'https://video.online-convert.com/convert-to-mp4';
 export const GOOGLE_API_KEY = 'AIzaSyDIijziwMBTuCoKGMXhaVzBzUZibDVwiBM';
-export const GOOGLE_CLIENT_ID = '44440188363-5vnafandpsrppr9189u7sc8q755oar9d';
+export const GOOGLE_CLIENT_ID = '44440188363-5vnafandpsrppr9189u7sc8q755oar9d.apps.googleusercontent.com';
+/** Cloud project number for Picker API setAppId (from Google Cloud Console > IAM & Admin > Settings) */
+export const GOOGLE_APP_ID = '44440188363';
+export const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/drive';
 
 export interface DistanceUnits {
 	fullUnits: string[];
