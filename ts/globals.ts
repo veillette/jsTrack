@@ -4,7 +4,8 @@
  */
 
 import Handsontable from 'handsontable';
-import 'handsontable/dist/handsontable.full.css';
+import 'handsontable/styles/handsontable.min.css';
+import 'handsontable/styles/ht-theme-main.min.css';
 import { Modal } from './classes/modal';
 import { Project } from './classes/project';
 import { Timeline } from './classes/timeline';
@@ -73,6 +74,10 @@ export const sidebar = document.getElementById('sidebar') as HTMLDivElement;
 export const videoContainer = document.getElementById('video-container') as HTMLDivElement;
 export const canvas = document.getElementById('main') as HTMLCanvasElement;
 
+// Webcam modal elements
+export const webcamModal = document.getElementById('webcam-modal') as HTMLDivElement;
+export const webcamReviewModal = document.getElementById('webcam-review-modal') as HTMLDivElement;
+
 // ─── Stage & Background ───
 
 export const stage = new createjs.Stage('main');
@@ -84,10 +89,12 @@ stage.addChild(background);
 // ─── Master project ───
 
 const tableContainer = document.getElementById('table') as HTMLDivElement;
+tableContainer.classList.add('ht-theme-main');
+
 export const master = new Project(
 	'My Project',
 	new Timeline(canvas.width, canvas.height, document.getElementById('video') as HTMLVideoElement, 30),
-	new Handsontable(tableContainer, {}),
+	new Handsontable(tableContainer, { licenseKey: 'non-commercial-and-evaluation' }),
 	stage,
 	background,
 );

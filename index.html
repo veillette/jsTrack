@@ -65,10 +65,24 @@
             <div id="modal-container" class="active launch">
                 <div id="launch" class="modal active">
 					<img src="info/logo.png" alt="trackTS Logo" id="modal-logo">
-                    <div id="file-input-container">
+
+                    <!-- PRIMARY: Webcam Recording -->
+                    <div class="launch-primary">
+                        <button id="webcam-record-button" class="primary-action">
+                            <span class="webcam-icon"></span>
+                            Record from Webcam
+                        </button>
+                    </div>
+
+                    <div class="launch-divider">
+                        <span>or load an existing video</span>
+                    </div>
+
+                    <!-- SECONDARY: File Loading -->
+                    <div id="file-input-container" class="launch-secondary">
                         <div class="area" id="file-drop-area">
                             <div class="area-content">
-                                <div class="text">Drag a video or .trackTS file here to begin, or</div>
+                                <div class="text">Drag a video or .trackTS file here, or</div>
                                 <div class="launch-buttons">
                                     <label for="file-input" class="button">Select Local File</label>
                                     <button id="pick" disabled=true>Select From Drive</button>
@@ -76,7 +90,40 @@
                                 <a id="info-link" href="info">What is trackTS?</a>
                             </div>
                         </div>
-                        <input type="file" id="file-input" accept=".trackTS,.mp4,.m4v">
+                        <input type="file" id="file-input" accept=".trackTS,.mp4,.m4v,.webm">
+                    </div>
+                </div>
+
+                <!-- Webcam Recording Modal -->
+                <div id="webcam-modal" class="modal">
+                    <div class="modal-title">Record from Webcam</div>
+                    <div class="webcam-camera-select">
+                        <label for="camera-select">Camera:</label>
+                        <select id="camera-select"></select>
+                    </div>
+                    <div class="webcam-preview-container">
+                        <video id="webcam-preview" autoplay muted playsinline></video>
+                        <div class="webcam-recording-indicator hidden">
+                            <span class="recording-dot"></span>
+                            <span class="recording-time">00:00</span>
+                        </div>
+                        <div class="webcam-status"></div>
+                    </div>
+                    <div class="form-buttons">
+                        <button id="webcam-cancel">Cancel</button>
+                        <button id="webcam-action" class="webcam-action-btn">Start Recording</button>
+                    </div>
+                </div>
+
+                <!-- Webcam Review Modal -->
+                <div id="webcam-review-modal" class="modal">
+                    <div class="modal-title">Review Recording</div>
+                    <div class="webcam-preview-container">
+                        <video id="webcam-review-video" controls playsinline></video>
+                    </div>
+                    <div class="form-buttons">
+                        <button id="webcam-rerecord">Re-record</button>
+                        <button id="webcam-use-video" class="webcam-action-btn">Use Video</button>
                     </div>
                 </div>
             </div>

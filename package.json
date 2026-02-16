@@ -6,6 +6,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
+    "serve": "npx serve -l 3000 .",
+    "start": "npm run build && npm run serve",
     "lint": "biome check ts/",
     "lint:fix": "biome check --write ts/",
     "format": "biome format --write ts/"

@@ -556,3 +556,232 @@ body > .scale-draggable {
 #fullscreen-loader.active {
     display: block;
 }
+
+/* ─── Webcam Recording Styles ─── */
+
+/* Launch modal reorganization */
+.launch-primary {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.launch-primary .primary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font: 18px "Source Sans Pro", sans-serif;
+    color: #FFF;
+    background: linear-gradient(135deg, #00b38c 0%, #00d4a4 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 179, 140, 0.3);
+}
+
+.launch-primary .primary-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 179, 140, 0.4);
+}
+
+.launch-primary .primary-action:active {
+    transform: translateY(0);
+}
+
+.launch-primary .webcam-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: url("icons/webcam.svg") no-repeat center;
+    background-size: contain;
+    filter: brightness(0) invert(1);
+}
+
+.launch-divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.launch-divider span {
+    font: 14px "Source Sans Pro", sans-serif;
+    color: #888;
+    background: #FFF;
+    padding: 0 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.launch-divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    max-width: 80%;
+    height: 1px;
+    background: #ddd;
+}
+
+.launch-secondary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.launch-secondary .area {
+    width: 45vw;
+    height: 35vh;
+    min-height: 200px;
+}
+
+/* Webcam Modal Styles */
+#webcam-modal,
+#webcam-review-modal {
+    width: 600px;
+    max-width: 90vw;
+}
+
+.webcam-camera-select {
+    margin-bottom: 15px;
+    font: 14px "Source Sans Pro", sans-serif;
+}
+
+.webcam-camera-select label {
+    margin-right: 10px;
+}
+
+.webcam-camera-select select {
+    font: 14px "Source Sans Pro", sans-serif;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 200px;
+    cursor: pointer;
+}
+
+.webcam-preview-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+#webcam-preview,
+#webcam-review-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #1a1a1a;
+}
+
+.webcam-recording-indicator {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #FFF;
+    font: 14px "Source Code Pro", monospace;
+}
+
+.webcam-recording-indicator.hidden {
+    display: none;
+}
+
+@keyframes recordingPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.recording-dot {
+    width: 12px;
+    height: 12px;
+    background: #ff4444;
+    border-radius: 50%;
+    animation: recordingPulse 1s ease-in-out infinite;
+}
+
+.recording-time {
+    min-width: 45px;
+}
+
+.webcam-status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #FFF;
+    font: 16px "Source Sans Pro", sans-serif;
+    padding: 20px;
+}
+
+.webcam-status.error {
+    color: #ff6b6b;
+}
+
+.webcam-status .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #FFF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Webcam action button states */
+.webcam-action-btn {
+    background: #00b38c !important;
+}
+
+.webcam-action-btn.recording {
+    background: #ff4444 !important;
+}
+
+#webcam-use-video {
+    background: #00b38c !important;
+}
+
+#webcam-rerecord {
+    background: #666 !important;
+}
+
+/* Permission denied message styling */
+.webcam-permission-denied {
+    text-align: center;
+    padding: 30px;
+}
+
+.webcam-permission-denied h3 {
+    color: #ff6b6b;
+    margin-bottom: 15px;
+}
+
+.webcam-permission-denied p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.webcam-permission-denied .fallback-link {
+    color: #00b38c;
+    cursor: pointer;
+    text-decoration: underline;
+}

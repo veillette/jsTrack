@@ -29,6 +29,9 @@ import './projectlisteners';
 // 9. Modal form event handlers
 import './modalevents';
 
+// 9b. Webcam recording modal handlers
+import './webcamevents';
+
 // 10. Keyboard shortcuts
 import './keycommands';
 
