@@ -4,7 +4,7 @@ This file provides guidance for Claude and AI agents (e.g., Cursor) when working
 
 ## Project Overview
 
-trackTS is a web-based video tracking application. It allows users to extract position data from objects in videos for motion analysis.
+trackTS is a web-based video tracking application. It allows users to extract position data from objects in videos for motion analysis. Key features include webcam recording, video import, multi-track point plotting, scale/axes configuration, and data export.
 
 ## Quick Reference
 
@@ -33,13 +33,26 @@ npm run dev
 
 # Production build
 npm run build
+
+# Build and serve locally
+npm run start
+
+# Serve only (port 3000)
+npm run serve
+
+# Regenerate app icons from SVG
+npm run generate-icons
 ```
 
 The build compiles TypeScript from `ts/` and bundles into `dist/bundle.iife.js` via Vite.
 
 ## Running the Application
 
-Open `index.html` directly in a browser. No server is required unless using Google Drive integration, in which case serve over `http://localhost` with any static file server.
+```bash
+npm run start
+```
+
+Then open http://localhost:3000. Alternatively, open `index.html` directly in a browser (webcam features require a server).
 
 ## Architecture
 
@@ -49,6 +62,7 @@ Open `index.html` directly in a browser. No server is required unless using Goog
 - **CreateJS (EaselJS)** for canvas rendering
 - **Handsontable** for data tables
 - **math.js** for unit conversion
+- **sharp** for icon generation (dev)
 - External JS libraries live in `src/` and are loaded via `<script>` tags in `index.html`
 
 ### Directory Structure
@@ -58,8 +72,13 @@ Open `index.html` directly in a browser. No server is required unless using Goog
   - `ts/globals.ts` — Shared global state (master Project, Stage, DOM refs)
   - `ts/index.ts` — Main render loop and canvas drawing
   - `ts/functions.ts` — Utility functions
+  - `ts/webcam.ts` — WebcamRecorder class for camera access and recording
+  - `ts/webcamevents.ts` — Webcam modal event handlers and workflow
 - `src/` — Vendored external JS libraries and CSS
 - `dist/` — Build output (`bundle.iife.js`)
+- `scripts/` — Build scripts (`generate-icons.ts`)
+- `icons/` — SVG icons and generated app icons
+- `.vscode/` — VS Code workspace configuration
 - `index.html` — Main HTML entry point
 
 ### Key Patterns
@@ -86,6 +105,13 @@ Project
 - `.trackts` — ZIP containing JSON project data + embedded video
 - Export formats: XLSX, CSV, TXT
 
+### Webcam Recording
+
+The webcam feature (`ts/webcam.ts`, `ts/webcamevents.ts`) uses:
+- `MediaDevices.getUserMedia()` for camera access
+- `MediaRecorder` API for recording (WebM format)
+- Custom duration fix for WebM files (MediaRecorder creates files with Infinity duration)
+
 ## TypeScript Configuration
 
 - Target: ES2017, Module: ES2020
@@ -108,7 +134,19 @@ npm run lint:fix
 npm run format
 ```
 
+## VS Code
+
+The project includes workspace configuration in `.vscode/`:
+
+- **settings.json** — Biome as default formatter, format on save, TypeScript SDK
+- **extensions.json** — Recommended extensions (Biome, TypeScript, etc.)
+- **tasks.json** — Build, dev, serve, lint, generate-icons tasks
+- **launch.json** — Debug configurations for Chrome/Edge
+
+Use `Ctrl+Shift+B` to run the default build task, or `F5` to launch with debugging.
+
 ## Notes
 
 - The `dist/bundle.iife.js` is generated — do not edit it directly.
 - External libraries in `src/` are vendored and should not be modified.
+- Icon source is `icons/app_icons/app_icon.svg` — run `npm run generate-icons` after changes.
