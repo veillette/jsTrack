@@ -11,6 +11,7 @@ import * as path from 'node:path';
 
 const SOURCE_SVG = 'icons/app_icons/app_icon.svg';
 const OUTPUT_DIR = 'icons/app_icons';
+const FAVICON_DIR = 'icons/favicon';
 const INFO_DIR = 'info';
 
 // Sizes for manifest icons
@@ -68,6 +69,9 @@ async function main(): Promise<void> {
 	if (!fs.existsSync(OUTPUT_DIR)) {
 		fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 	}
+	if (!fs.existsSync(FAVICON_DIR)) {
+		fs.mkdirSync(FAVICON_DIR, { recursive: true });
+	}
 	if (!fs.existsSync(INFO_DIR)) {
 		fs.mkdirSync(INFO_DIR, { recursive: true });
 	}
@@ -91,11 +95,11 @@ async function main(): Promise<void> {
 
 	// Generate favicon
 	console.log('\nGenerating favicon...');
-	await generateFavicon(SOURCE_SVG, 'favicon.ico');
+	await generateFavicon(SOURCE_SVG, path.join(FAVICON_DIR, 'favicon.ico'));
 
 	// Generate apple-touch-icon
 	console.log('\nGenerating apple-touch-icon...');
-	await generatePng(SOURCE_SVG, 'apple-touch-icon.png', APPLE_TOUCH_ICON_SIZE);
+	await generatePng(SOURCE_SVG, path.join(FAVICON_DIR, 'apple-touch-icon.png'), APPLE_TOUCH_ICON_SIZE);
 
 	console.log('\nIcon generation complete!');
 }
