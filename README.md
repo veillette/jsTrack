@@ -15,12 +15,6 @@ Extract position data from objects in a video for motion tracking and analysis.
 - Google Drive integration for cloud storage
 - Keyboard shortcuts and undo/redo support
 
-## Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (for building from source)
-
 ### Install & Build
 
 ```bash
