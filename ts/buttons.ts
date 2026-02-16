@@ -79,7 +79,7 @@ document.querySelector('#save-button:not(.disabled)')?.addEventListener('click',
 
 document.querySelectorAll('.help-button:not(.disabled)').forEach((el) => {
 	el.addEventListener('click', () => {
-		window.open('using_trackts.pdf', '_blank');
+		window.open('instructions.md', '_blank');
 	});
 });
 
