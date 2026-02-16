@@ -19,21 +19,6 @@ The `src/` directory contains vendored (manually copied) JavaScript libraries lo
   7. Deleted `src/undomanager.js`.
   8. Verified with `npm run build` and `npm run lint`.
 
-### ffmpeg
-
-- **Vendored file:** `src/ffmpeg-worker-mp4.js` (removed, was ~12MB)
-- **npm packages:** [`@ffmpeg/ffmpeg`](https://www.npmjs.com/package/@ffmpeg/ffmpeg), [`@ffmpeg/util`](https://www.npmjs.com/package/@ffmpeg/util)
-- **Install:** `npm install @ffmpeg/ffmpeg @ffmpeg/util`
-- **Steps taken:**
-  1. Installed `@ffmpeg/ffmpeg` and `@ffmpeg/util` via npm.
-  2. Created a new `ts/videoConverter.ts` module with async/Promise-based API.
-  3. The module uses the single-threaded FFmpeg core (loaded from CDN) to avoid SharedArrayBuffer/COOP/COEP header requirements.
-  4. Updated `ts/handlefiles.ts` to import and use the new `convertToMp4()` function.
-  5. Replaced the Web Worker message-passing code with clean async/await calls.
-  6. Added proper error handling with user-friendly alert modals.
-  7. Deleted the vendored `src/ffmpeg-worker-mp4.js` file (saves ~12MB).
-  8. Verified with `npm run build` and TypeScript check.
-- **Notes:** The WASM core (~30MB) is loaded on-demand from unpkg CDN when video conversion is first requested, keeping the initial bundle small.
 
 ## Remaining Vendored Libraries
 
@@ -46,76 +31,6 @@ Each library below is loaded via a `<script>` tag in `index.html` and exposes gl
 - **Globals used:** `createjs.Stage`, `createjs.Shape`, `createjs.Bitmap`, `createjs.Container`, `createjs.Text`, `createjs.Ticker`, etc.
 - **Notes:** EaselJS is part of the CreateJS suite. The official package is unmaintained; community forks exist. This is the most heavily used library in the codebase, so migration carries higher risk. The `createjs` namespace is referenced in nearly every file.
 
-### Handsontable
-
-- **Vendored files:** `src/handsontable.min.js`, `src/handsontable.full.css`, `src/handsontable.css`
-- **npm package:** [`handsontable`](https://www.npmjs.com/package/handsontable)
-- **Globals used:** `Handsontable` class
-- **Notes:** Handsontable changed to a non-commercial license (requires a paid license for commercial use). The vendored version may be an older MIT-licensed release. Verify license compatibility before upgrading. CSS files would need to be imported via Vite's CSS handling or kept as external stylesheets.
-
-### JSZip
-
-- **Vendored files:** `src/jszip.min.js`, `src/jszip.js`, `src/jszip-utils.min.js`, `src/jszip-utils-ie.min.js`
-- **npm package:** [`jszip`](https://www.npmjs.com/package/jszip)
-- **Globals used:** `JSZip`, `JSZipUtils`
-- **Notes:** JSZip has good npm support with built-in TypeScript types. `jszip-utils` is a separate package ([`jszip-utils`](https://www.npmjs.com/package/jszip-utils)). The IE-specific utils file can likely be dropped.
-
-### FileSaver
-
-- **Vendored file:** `src/FileSaver.js`
-- **npm package:** [`file-saver`](https://www.npmjs.com/package/file-saver)
-- **Types:** [`@types/file-saver`](https://www.npmjs.com/package/@types/file-saver)
-- **Globals used:** `saveAs()`
-- **Notes:** Straightforward migration. The npm package has community-maintained types.
-
-### SheetJS (XLSX)
-
-- **Vendored file:** `src/xlsx.min.js`
-- **npm package:** [`xlsx`](https://www.npmjs.com/package/xlsx)
-- **Globals used:** `XLSX.utils`, `XLSX.writeFile()`
-- **Notes:** SheetJS changed its license model. The "community edition" is available via npm. Verify license terms.
-
-### interact.js
-
-- **Vendored file:** `src/interact.min.js`
-- **npm package:** [`interactjs`](https://www.npmjs.com/package/interactjs)
-- **Globals used:** `interact()`
-- **Notes:** Good npm support with built-in TypeScript types. Straightforward migration.
-
-### Dragula
-
-- **Vendored files:** `src/dragula.min.js`, `src/dragula.min.css`
-- **npm package:** [`dragula`](https://www.npmjs.com/package/dragula)
-- **Types:** [`@types/dragula`](https://www.npmjs.com/package/@types/dragula)
-- **Globals used:** `dragula()`
-- **Notes:** CSS would need to be imported separately. The npm package is well-maintained.
-
-### keyboardJS
-
-- **Vendored file:** `src/keyboard.min.js`
-- **npm package:** [`keyboardjs`](https://www.npmjs.com/package/keyboardjs)
-- **Globals used:** `keyboardJS.on()`, `keyboardJS.pause()`, `keyboardJS.resume()`
-- **Notes:** The npm package includes TypeScript types.
-
-### math.js
-
-- **Vendored file:** `src/math.min.js`
-- **npm package:** [`mathjs`](https://www.npmjs.com/package/mathjs)
-- **Globals used:** `math.unit()`, `math.multiply()`, `math.divide()`, `math.format()`
-- **Notes:** Full npm support with built-in TypeScript types. Note: the full mathjs package is large (~700KB). If only unit conversion is used, consider importing selectively or using a lighter alternative.
-
-### Platform.js
-
-- **Vendored file:** `src/platform.js`
-- **npm package:** [`platform`](https://www.npmjs.com/package/platform)
-- **Globals used:** `platform.name`, `platform.version`, `platform.os`
-- **Notes:** Simple migration. Small library.
-
-### jQuery
-
-- **Vendored file:** `src/jquery-3.3.1.min.js`
-- **npm package:** [`jquery`](https://www.npmjs.com/package/jquery)
-- **Notes:** Check if jQuery is still actively used in the codebase. It may have been replaced by native DOM APIs during the TypeScript port. If unused, it can simply be removed.
 
 ## General Migration Steps
 
@@ -132,20 +47,3 @@ For each library:
 7. **Delete vendored file:** Remove the old file from `src/`.
 8. **Build and test:** Run `npm run build` and `npm run lint` to verify.
 
-## Priority Recommendations
-
-Libraries with the best npm support and lowest migration risk:
-
-1. **JSZip** — built-in types, widely used, stable API
-2. **FileSaver** — tiny library, community types available
-3. **interact.js** — built-in types, active maintenance
-4. **Dragula** — community types, stable API
-5. **keyboardJS** — built-in types
-6. **Platform.js** — small and simple
-
-Higher risk (license changes, large API surface, or major version differences):
-
-7. **Handsontable** — license change to non-commercial
-8. **SheetJS (XLSX)** — license model change
-9. **math.js** — large bundle size consideration
-10. **CreateJS** — unmaintained, most pervasive in codebase
