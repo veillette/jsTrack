@@ -5,14 +5,13 @@
 
 import { showLoader } from './functions';
 import {
-	initGoogleApis,
+	GOOGLE_API_KEY,
+	GOOGLE_APP_ID,
 	getAccessToken,
+	initGoogleApis,
 	requestAccessToken,
 	revokeAccessToken,
-	GOOGLE_APP_ID,
-	GOOGLE_API_KEY,
 } from './googleAuth';
-import { GOOGLE_CLIENT_ID } from './globals';
 import { handleFile } from './handlefiles';
 
 interface FilePickerOptions {
@@ -32,15 +31,12 @@ class FilePicker {
 		this.logoutEl = options.logoutEl;
 		this.onSelect = options.onSelect;
 		this.buttonEl.addEventListener('click', this.open.bind(this));
-		this.logoutEl.addEventListener(
-			'click',
-			() => {
-				if (!this.logoutEl.classList.contains('disabled')) {
-					revokeAccessToken();
-					this.logoutEl.classList.add('disabled');
-				}
-			},
-		);
+		this.logoutEl.addEventListener('click', () => {
+			if (!this.logoutEl.classList.contains('disabled')) {
+				revokeAccessToken();
+				this.logoutEl.classList.add('disabled');
+			}
+		});
 
 		this.buttonEl.disabled = true;
 		initGoogleApis().then(this._onApisLoaded.bind(this)).catch(console.error);

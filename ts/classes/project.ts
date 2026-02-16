@@ -10,7 +10,9 @@
 
 import type Handsontable from 'handsontable';
 import UndoManager from 'undo-manager';
+
 type UndoManagerInstance = ReturnType<typeof UndoManager>;
+
 import { roundTo } from '../functions';
 import { Axes, type Coordinate } from './axes';
 import { CoordinateMapper } from './coordinate-mapper';

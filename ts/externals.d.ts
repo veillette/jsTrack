@@ -138,10 +138,7 @@ declare namespace createjs {
 // ─── Google API ───
 
 declare namespace gapi {
-	function load(
-		libraries: string,
-		options: { callback: () => void; onerror?: (error: unknown) => void },
-	): void;
+	function load(libraries: string, options: { callback: () => void; onerror?: (error: unknown) => void }): void;
 	namespace client {
 		function setApiKey(key: string): void;
 		function load(urlOrObject: string): Promise<void>;
@@ -161,9 +158,7 @@ declare namespace gapi {
 			body?: Record<string, string>;
 		}): gapi.client.Request<T>;
 		interface Request<T> {
-			then<R>(
-				onFulfilled: (response: { result: T; headers?: Record<string, string> }) => R,
-			): Promise<R>;
+			then<R>(onFulfilled: (response: { result: T; headers?: Record<string, string> }) => R): Promise<R>;
 		}
 	}
 }

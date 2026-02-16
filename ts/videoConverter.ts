@@ -21,7 +21,10 @@ export async function loadFFmpeg(): Promise<FFmpeg> {
 
 	if (loadPromise) {
 		await loadPromise;
-		return ffmpeg!;
+		if (!ffmpeg) {
+			throw new Error('FFmpeg failed to load');
+		}
+		return ffmpeg;
 	}
 
 	ffmpeg = new FFmpeg();
@@ -56,22 +59,19 @@ export interface ConversionOptions {
  * @param options - Optional callbacks for progress and logging
  * @returns A new File object containing the MP4 video
  */
-export async function convertToMp4(
-	inputFile: File,
-	options: ConversionOptions = {},
-): Promise<File> {
+export async function convertToMp4(inputFile: File, options: ConversionOptions = {}): Promise<File> {
 	const ffmpegInstance = await loadFFmpeg();
 
 	// Set up event listeners
 	if (options.onLog) {
 		ffmpegInstance.on('log', ({ message }) => {
-			options.onLog!(message);
+			options.onLog?.(message);
 		});
 	}
 
 	if (options.onProgress) {
 		ffmpegInstance.on('progress', ({ progress, time }) => {
-			options.onProgress!({ progress, time });
+			options.onProgress?.({ progress, time });
 		});
 	}
 
@@ -84,21 +84,11 @@ export async function convertToMp4(
 
 	// Run conversion - try codec copy first (fast), fall back to re-encode if needed
 	try {
-		await ffmpegInstance.exec([
-			'-i', inputName,
-			'-c:v', 'copy',
-			'-c:a', 'copy',
-			outputName,
-		]);
-	} catch {
-		// If codec copy fails, try re-encoding
-		await ffmpegInstance.exec([
-			'-i', inputName,
-			'-c:v', 'libx264',
-			'-preset', 'fast',
-			'-c:a', 'aac',
-			outputName,
-		]);
+		await ffmpegInstance.exec(['-i', inputName, '-c:v', 'copy', '-c:a', 'copy', outputName]);
+	} catch (err) {
+		// Codec copy failed; fall back to re-encoding
+		console.warn('Codec copy failed, falling back to re-encode:', err);
+		await ffmpegInstance.exec(['-i', inputName, '-c:v', 'libx264', '-preset', 'fast', '-c:a', 'aac', outputName]);
 	}
 
 	// Read the output file
@@ -115,11 +105,7 @@ export async function convertToMp4(
 	// Create a new Uint8Array to ensure it's backed by a standard ArrayBuffer
 	const uint8Array = new Uint8Array(outputData as Uint8Array);
 
-	return new File(
-		[uint8Array],
-		`${baseName}.mp4`,
-		{ type: 'video/mp4' },
-	);
+	return new File([uint8Array], `${baseName}.mp4`, { type: 'video/mp4' });
 }
 
 /**

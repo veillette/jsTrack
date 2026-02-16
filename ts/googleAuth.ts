@@ -32,10 +32,7 @@ function waitForGis(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const start = Date.now();
 		const check = () => {
-			if (
-				typeof google !== 'undefined' &&
-				google.accounts?.oauth2?.initTokenClient !== undefined
-			) {
+			if (typeof google !== 'undefined' && google.accounts?.oauth2?.initTokenClient !== undefined) {
 				resolve();
 				return;
 			}
@@ -82,9 +79,7 @@ export function initGoogleApis(): Promise<void> {
  * Request an OAuth access token. Resolves when user grants consent.
  * @param prompt 'consent' to always show consent UI, '' to use cached session
  */
-export function requestAccessToken(
-	prompt: 'consent' | '' = '',
-): Promise<string> {
+export function requestAccessToken(prompt: 'consent' | '' = ''): Promise<string> {
 	return new Promise((resolve, reject) => {
 		if (!tokenClient) {
 			reject(new Error('Google APIs not initialized'));

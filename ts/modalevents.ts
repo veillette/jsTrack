@@ -7,6 +7,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
 import type { Modal, ModalExportData } from './classes/modal';
+import { alertModal } from './classes/modal';
 import { SCALE_EDIT_FOCUS_DELAY_MS } from './constants';
 import { hideLoader, showLoader } from './functions';
 import {
@@ -89,6 +90,7 @@ saveProject
 			master.saved = true;
 		} catch (err) {
 			console.error(err);
+			await alertModal('Failed to save project. Please try again.', 'Save Error');
 		} finally {
 			hideLoader();
 		}
@@ -115,10 +117,10 @@ saveProject
 									const data = await fetchBinaryContent(fileUrl);
 
 									const exported = this.export();
-										let filename =
-											exported && typeof exported === 'object'
-												? (exported as Record<string, string>).filename ?? ''
-												: '';
+									let filename =
+										exported && typeof exported === 'object'
+											? ((exported as Record<string, string>).filename ?? '')
+											: '';
 									if (filename.length === 0) {
 										filename = `${master.name.toLowerCase().replace(' ', '_')}-${Date.now()}.${CUSTOM_EXTENSION}`;
 									} else if (filename.split('.').pop() !== CUSTOM_EXTENSION)
@@ -145,8 +147,8 @@ saveProject
 					}
 				}
 			})
-			.catch(() => {
-				console.error('Google API failed to load within timeout');
+			.catch((err) => {
+				console.error('Google API failed to load within timeout', err);
 			});
 	})
 	.on('cancel', function (this: Modal) {

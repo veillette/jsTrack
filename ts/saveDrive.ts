@@ -4,12 +4,7 @@
  */
 
 import { utf8Length } from './functions';
-import {
-	initGoogleApis,
-	getAccessToken,
-	requestAccessToken,
-	revokeAccessToken,
-} from './googleAuth';
+import { getAccessToken, initGoogleApis, requestAccessToken, revokeAccessToken } from './googleAuth';
 
 interface DriveUploadOptions {
 	buttonEl: HTMLButtonElement;
@@ -27,15 +22,12 @@ export class DriveUpload {
 		this.logoutEl = options.logoutEl;
 		this._getFile = options.getFile;
 		this.buttonEl.addEventListener('click', this.open.bind(this));
-		this.logoutEl.addEventListener(
-			'click',
-			() => {
-				if (!this.logoutEl.classList.contains('disabled')) {
-					revokeAccessToken();
-					this.logoutEl.classList.add('disabled');
-				}
-			},
-		);
+		this.logoutEl.addEventListener('click', () => {
+			if (!this.logoutEl.classList.contains('disabled')) {
+				revokeAccessToken();
+				this.logoutEl.classList.add('disabled');
+			}
+		});
 
 		this.buttonEl.disabled = true;
 		initGoogleApis().then(this._onApisLoaded.bind(this)).catch(console.error);

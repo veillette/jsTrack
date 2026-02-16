@@ -113,7 +113,8 @@ async function projectBackup(): Promise<void> {
 						setStorage('backup', JSON.stringify(toBackup));
 						master.backup();
 						success = 2;
-					} catch {
+					} catch (err) {
+						console.warn('localStorage quota exceeded: storing backup without video', err);
 						toBackup.video = undefined;
 						setStorage('backup', JSON.stringify(toBackup));
 						master.backup();
@@ -132,7 +133,8 @@ async function projectBackup(): Promise<void> {
 						setStorage('backup', JSON.stringify(toBackup));
 						master.backup();
 						success = 2;
-					} catch {
+					} catch (err) {
+						console.warn('localStorage quota exceeded: storing backup without video', err);
 						toBackup.video = undefined;
 						setStorage('backup', JSON.stringify(toBackup));
 						master.backup();
@@ -144,7 +146,8 @@ async function projectBackup(): Promise<void> {
 			} else {
 				success = 1;
 			}
-		} catch {
+		} catch (err) {
+			console.error('Failed to write backup to localStorage', err);
 			if (lastBackupRaw) setStorage('backup', lastBackupRaw);
 			master.backup();
 			success = false;
