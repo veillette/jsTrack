@@ -3,11 +3,10 @@
  * Manages webcam recording workflow: permission, preview, recording, review.
  */
 
-import { hideLoader, showLoader } from './functions';
+import { generateProjectName, hideLoader, showLoader } from './functions';
 import { master, newProject, webcamModal, webcamReviewModal } from './globals';
 import { hideLaunchModal, loadVideo } from './load';
-import { convertToMp4 } from './videoConverter';
-import { WebcamRecorder } from './webcam';
+import { fixWebmDuration, WebcamRecorder } from './webcam';
 
 // ─── State ───
 
@@ -210,34 +209,40 @@ async function useRecordedVideo(): Promise<void> {
 
 	showLoader();
 	showModal(webcamModal);
-	setStatusLoading('Converting video...');
+	setStatusLoading('Processing video...');
 
 	try {
-		// Create a File from the blob
-		const extension = recordedBlob.type.includes('mp4') ? 'mp4' : 'webm';
-		const recordingFile = new File([recordedBlob], `recording.${extension}`, { type: recordedBlob.type });
-
-		let videoFile: File;
-
-		// Convert to MP4 if needed
-		if (!recordedBlob.type.includes('mp4')) {
-			videoFile = await convertToMp4(recordingFile, {
-				onProgress: (progress) => {
-					const percent = Math.round(progress.progress * 100);
-					setStatusLoading(`Converting video... ${percent}%`);
-				},
-			});
-		} else {
-			videoFile = recordingFile;
+		// Fix WebM duration (MediaRecorder creates WebM with Infinity duration)
+		let videoDuration = 0;
+		let processedBlob = recordedBlob;
+		if (recordedBlob.type.includes('webm')) {
+			setStatusLoading('Fixing video metadata...');
+			const fixed = await fixWebmDuration(recordedBlob);
+			processedBlob = fixed.blob;
+			videoDuration = fixed.duration;
 		}
+
+		// Create a File from the blob
+		const extension = processedBlob.type.includes('mp4') ? 'mp4' : 'webm';
+		const videoFile = new File([processedBlob], `recording.${extension}`, { type: processedBlob.type });
+
+		setStatusLoading('Loading video...');
 
 		// Load the video into the project
 		loadVideo(videoFile, () => {
-			master.timeline.detectFrameRate((framerate: number) => {
-				hideLoader();
-				hideLaunchModal();
-				newProject.push({ framerate: String(framerate) }).show();
-			});
+			// For webcam recordings, use 30fps default and the pre-calculated duration
+			// This avoids issues with WebM duration detection
+			const framerate = 30;
+
+			// Store the known duration for use in updateTiming
+			if (videoDuration > 0) {
+				master.timeline.knownDuration = videoDuration;
+			}
+
+			hideLoader();
+			webcamModal.classList.remove('active');
+			hideLaunchModal();
+			newProject.push({ name: generateProjectName(), framerate: String(framerate) }).show();
 		});
 
 		// Clean up

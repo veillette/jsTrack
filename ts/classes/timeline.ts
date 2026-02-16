@@ -36,6 +36,8 @@ export class Timeline extends EventEmitter {
 	activeFrames: Frame[];
 	playInterval: ReturnType<typeof setInterval> | undefined;
 	project!: Project;
+	/** Pre-calculated duration for videos with unreliable duration metadata (e.g., WebM from MediaRecorder) */
+	knownDuration: number | null = null;
 
 	constructor(width: number, height: number, video: HTMLVideoElement, fps: number) {
 		super();
@@ -60,8 +62,19 @@ export class Timeline extends EventEmitter {
 	}
 
 	createFrames(): void {
+		// Safety check: prevent infinite loop if duration is not finite
+		if (!Number.isFinite(this.duration) || this.duration <= 0) {
+			console.error('Cannot create frames: invalid duration', this.duration);
+			return;
+		}
+
 		let counter = 1;
-		for (let time = this.frameTime; time <= this.video.duration; time = roundTo(time + this.frameTime, 3)) {
+		const maxFrames = Math.ceil(this.duration / this.frameTime) + 1;
+		for (
+			let time = this.frameTime;
+			time <= this.duration && counter < maxFrames;
+			time = roundTo(time + this.frameTime, 3)
+		) {
 			this.frames[counter] = new Frame(this, time, counter);
 			counter++;
 		}
@@ -75,6 +88,14 @@ export class Timeline extends EventEmitter {
 		tempVideo.onloadeddata = () => {
 			if (firstLoad) {
 				firstLoad = false;
+
+				// Handle WebM files with unknown duration (common with MediaRecorder)
+				if (!Number.isFinite(tempVideo.duration)) {
+					console.warn('Video duration is not finite, using default framerate');
+					if (callback !== null) callback(30);
+					return;
+				}
+
 				tempVideo.currentTime = tempVideo.duration;
 				const newCanv = document.createElement('canvas');
 				newCanv.height = tempVideo.videoHeight;
@@ -235,7 +256,20 @@ export class Timeline extends EventEmitter {
 			start: this.startFrame / this.frameCount || 0,
 			end: this.endFrame / this.frameCount || 1,
 		};
-		this.duration = roundTo(duration, 3);
+
+		// Use knownDuration if provided duration is not finite (WebM issue)
+		let effectiveDuration = duration;
+		if (!Number.isFinite(duration) || duration <= 0) {
+			if (this.knownDuration && Number.isFinite(this.knownDuration) && this.knownDuration > 0) {
+				effectiveDuration = this.knownDuration;
+				console.log('Using knownDuration:', effectiveDuration);
+			} else {
+				console.error('Invalid duration and no knownDuration available');
+				return 0;
+			}
+		}
+
+		this.duration = roundTo(effectiveDuration, 3);
 		this.fps = parseFloat(String(fps));
 		this.frameTime = roundTo(1 / this.fps, 3);
 		this.frameCount = Math.floor(this.duration / this.frameTime);

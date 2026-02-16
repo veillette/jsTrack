@@ -4,7 +4,7 @@
  */
 
 import { alertModal, confirmModal } from './classes/modal';
-import { hideLoader, showLoader } from './functions';
+import { generateProjectName, hideLoader, showLoader } from './functions';
 import { CUSTOM_EXTENSION, master, newProject, VIDEO_CONVERTOR } from './globals';
 import { dataLoaded, hideLaunchModal, loadProject, loadVideo } from './load';
 import { convertToMp4 } from './videoConverter';
@@ -50,7 +50,7 @@ export async function handleFile(
 					if (callback !== null) callback();
 					master.timeline.detectFrameRate((framerate: number) => {
 						hideLaunchModal();
-						newProject.push({ framerate: String(framerate) });
+						newProject.push({ name: generateProjectName(), framerate: String(framerate) });
 						newProject.show();
 						hideLoader();
 					});
@@ -94,7 +94,7 @@ export async function handleFile(
 							if (callback !== null) callback();
 							master.timeline.detectFrameRate((framerate: number) => {
 								hideLaunchModal();
-								newProject.push({ framerate: String(framerate) });
+								newProject.push({ name: generateProjectName(), framerate: String(framerate) });
 								newProject.show();
 								hideLoader();
 							});

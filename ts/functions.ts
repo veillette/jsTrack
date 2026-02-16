@@ -114,3 +114,17 @@ export function compareImages(img1: ImageData, img2: ImageData): boolean {
 	}
 	return true;
 }
+
+// ─── Project Name Generator ───
+
+const PROJECT_ADJECTIVES = ['anxious', 'dancing', 'curious', 'sleepy', 'bouncy', 'sneaky'];
+const PROJECT_NOUNS = ['Pig', 'Penguin', 'Raccoon', 'Llama', 'Otter', 'Hedgehog'];
+
+/**
+ * Generate a whimsical project name like "anxiousPig" or "dancingLlama"
+ */
+export function generateProjectName(): string {
+	const adjective = PROJECT_ADJECTIVES[Math.floor(Math.random() * PROJECT_ADJECTIVES.length)];
+	const noun = PROJECT_NOUNS[Math.floor(Math.random() * PROJECT_NOUNS.length)];
+	return `${adjective}${noun}`;
+}

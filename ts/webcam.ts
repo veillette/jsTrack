@@ -12,6 +12,57 @@ export function getSupportedMimeType(): string {
 	return types.find((type) => MediaRecorder.isTypeSupported(type)) || '';
 }
 
+/**
+ * Fix WebM blob duration by seeking to the end to force browser to calculate it.
+ * WebM files from MediaRecorder often have Infinity duration until seeked.
+ */
+export function fixWebmDuration(blob: Blob): Promise<{ blob: Blob; duration: number }> {
+	return new Promise((resolve, reject) => {
+		const video = document.createElement('video');
+		video.preload = 'metadata';
+
+		const blobUrl = URL.createObjectURL(blob);
+		video.src = blobUrl;
+
+		video.onloadedmetadata = () => {
+			// If duration is already valid, return immediately
+			if (Number.isFinite(video.duration) && video.duration > 0) {
+				const duration = video.duration;
+				URL.revokeObjectURL(blobUrl);
+				resolve({ blob, duration });
+				return;
+			}
+
+			// Seek to a very large time to force duration calculation
+			video.currentTime = Number.MAX_SAFE_INTEGER;
+		};
+
+		video.onseeked = () => {
+			// Now duration should be available
+			const duration = video.duration;
+			video.currentTime = 0; // Reset to beginning
+			URL.revokeObjectURL(blobUrl);
+
+			if (Number.isFinite(duration) && duration > 0) {
+				resolve({ blob, duration });
+			} else {
+				reject(new Error('Could not determine video duration'));
+			}
+		};
+
+		video.onerror = () => {
+			URL.revokeObjectURL(blobUrl);
+			reject(new Error('Failed to load video for duration fix'));
+		};
+
+		// Timeout after 10 seconds
+		setTimeout(() => {
+			URL.revokeObjectURL(blobUrl);
+			reject(new Error('Timeout while fixing video duration'));
+		}, 10000);
+	});
+}
+
 export class WebcamRecorder {
 	private stream: MediaStream | null = null;
 	private mediaRecorder: MediaRecorder | null = null;
