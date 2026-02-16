@@ -85,8 +85,9 @@ export async function convertToMp4(inputFile: File, options: ConversionOptions =
 	// Run conversion - try codec copy first (fast), fall back to re-encode if needed
 	try {
 		await ffmpegInstance.exec(['-i', inputName, '-c:v', 'copy', '-c:a', 'copy', outputName]);
-	} catch {
-		// If codec copy fails, try re-encoding
+	} catch (err) {
+		// Codec copy failed; fall back to re-encoding
+		console.warn('Codec copy failed, falling back to re-encode:', err);
 		await ffmpegInstance.exec(['-i', inputName, '-c:v', 'libx264', '-preset', 'fast', '-c:a', 'aac', outputName]);
 	}
 
