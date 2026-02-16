@@ -1,6 +1,6 @@
 # trackTS
 
-A web-based video analysis and modeling  software and a fork of https://github.com/lucademian/JStrack. 
+A web-based video analysis and modeling software, and a fork of [JStrack](https://github.com/lucademian/JStrack).
 
 Extract position data from objects in a video for motion tracking and analysis.
 
@@ -15,7 +15,7 @@ Extract position data from objects in a video for motion tracking and analysis.
 - Google Drive integration for cloud storage
 - Keyboard shortcuts and undo/redo support
 
-### Install & Build
+## Install & Build
 
 ```bash
 git clone https://github.com/veillette/trackTS.git
@@ -26,7 +26,7 @@ npm run build
 
 Then open `index.html` in your browser. No server is required.
 
-### Development
+## Development
 
 ```bash
 npm run dev
@@ -34,7 +34,17 @@ npm run dev
 
 This runs Vite in watch mode — edit TypeScript files in `ts/` and the bundle rebuilds automatically.
 
-### Google Drive Integration
+## Linting & Formatting
+
+[Biome](https://biomejs.dev/) is used for linting and formatting:
+
+```bash
+npm run lint        # Check for issues
+npm run lint:fix    # Auto-fix issues
+npm run format      # Format only
+```
+
+## Google Drive Integration
 
 To use Drive features, serve the project over HTTP (e.g., `npx http-server`) and access via `http://localhost`. Set up API keys and OAuth by following the [Google Drive Picker guide](https://developers.google.com/drive/picker/guides/overview), then update `GOOGLE_API_KEY`, `GOOGLE_CLIENT_ID`, and `GOOGLE_APP_ID` in `ts/globals.ts`.
 
@@ -45,7 +55,7 @@ ts/             TypeScript source code
   classes/      Core classes (Project, Track, Timeline, Point, etc.)
   main.ts       Entry point
 src/            Vendored external JS libraries
-dist/           Build output (bundle.js)
+dist/           Build output (bundle.iife.js)
 index.html      Main application page
 ```
 
