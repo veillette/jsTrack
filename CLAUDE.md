@@ -114,7 +114,7 @@ The webcam feature (`ts/webcam.ts`, `ts/webcamevents.ts`) uses:
 
 ## TypeScript Configuration
 
-- Target: ES2017, Module: ES2020
+- Target: ES2020, Module: ESNext
 - All strict checks enabled (`strict: true`, `noImplicitAny`, `strictNullChecks`, etc.)
 - Path alias: `@/*` maps to `ts/*`
 - Source maps enabled
@@ -133,17 +133,6 @@ npm run lint:fix
 # Format only
 npm run format
 ```
-
-## VS Code
-
-The project includes workspace configuration in `.vscode/`:
-
-- **settings.json** — Biome as default formatter, format on save, TypeScript SDK
-- **extensions.json** — Recommended extensions (Biome, TypeScript, etc.)
-- **tasks.json** — Build, dev, serve, lint, generate-icons tasks
-- **launch.json** — Debug configurations for Chrome/Edge
-
-Use `Ctrl+Shift+B` to run the default build task, or `F5` to launch with debugging.
 
 ## Notes
 
