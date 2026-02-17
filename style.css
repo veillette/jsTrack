@@ -252,6 +252,9 @@ input.scale-text {
 #toolbox #play-pause-button.play {
     background-image: url("icons/play.svg");
 }
+#toolbox #auto-track-button {
+    background-image: url("icons/autotrack.svg");
+}
 #toolbox #help-button {
     background-image: url("icons/help.svg");
 }
