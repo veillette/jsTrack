@@ -13,14 +13,6 @@ body, html {
     width: 100vw;
     height: 100vh;
 }
-#modal-logo {
-	position: fixed;
-    z-index: 2;
-    width: 60px;
-    top: 30px;
-    left: 30px;
-}
-
 /* ─── Video Overlay (landing prompt) ─── */
 #video-overlay {
     position: absolute;
@@ -507,9 +499,6 @@ body > .scale-draggable {
 #modal-container.active {
     display: flex;
 }
-#modal-container.launch {
-    background: #FFF;
-}
 .modal {
     position: absolute;
     background: #FFF;
@@ -595,14 +584,6 @@ body > .scale-draggable {
 .modal .form-buttons button:last-of-type{
     margin-right: 0px;
 }
-#launch #file-input-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-#launch input {
-    display: none;
-}
 @keyframes highlightPulse {
     from {
         box-shadow: 0px 0px 15px 3px rgba(0, 255, 149, 0.3);
@@ -611,72 +592,6 @@ body > .scale-draggable {
         box-shadow: 0px 0px 25px 10px rgba(0, 255, 149, 0.4);
     }
 }
-#launch .area {
-    width: 50vw;
-    height: 50vh;
-    border: 3px rgb(226, 226, 226) solid;
-    border-radius: 20px;
-    background-position: center bottom;
-    background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation-direction: alternate;
-    animation-duration: 0.6s;
-    animation-fill-mode: backwards;
-    animation-iteration-count: infinite;
-    transition: all 0.4s;
-    position: relative;
-}
-#launch .area.highlight {
-    animation-name: highlightPulse;
-    border-color: rgb(0, 80, 17);
-    /* background-image: url("upload-icon.png");
-    background-position: center; */
-}
-#launch .area-content {
-    display: block;
-}
-#launch .area .text {
-    display: block;
-    font: 20px "Source Sans Pro", sans-serif;
-    margin-bottom: 20px;
-}
-#launch label.button, #launch button{
-    display: inline-block;
-    border: none;
-    font: 15px "Source Sans Pro", sans-serif;
-    color: rgb(0, 80, 17);
-    background: rgb(0, 255, 149);
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 10px;
-}
-#launch button:disabled, #launch button[disabled=""] {
-    display: none;
-}
-#launch .launch-buttons:last-child {
-    margin-right: 0;
-}
-#launch .launch-buttons {
-    display: block;
-    text-align: center;
-}
-#launch { 
-    text-align: center;
-}
-#launch #info-link {
-    display: inline-block;
-    text-align: center;
-    font: 17px "Source Sans Pro", sans-serif;
-    color: #707070;
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    margin-left: -50px;
-}
-
 #fullscreen-loader {
     position: fixed;
     width: 100%;
@@ -692,87 +607,6 @@ body > .scale-draggable {
 }
 
 /* ─── Webcam Recording Styles ─── */
-
-/* Launch modal reorganization */
-.launch-primary {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.launch-primary .primary-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font: 18px "Source Sans Pro", sans-serif;
-    color: #FFF;
-    background: linear-gradient(135deg, #00b38c 0%, #00d4a4 100%);
-    border: none;
-    border-radius: 8px;
-    padding: 16px 32px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 179, 140, 0.3);
-}
-
-.launch-primary .primary-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 179, 140, 0.4);
-}
-
-.launch-primary .primary-action:active {
-    transform: translateY(0);
-}
-
-.launch-primary .webcam-icon {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    background: url("icons/webcam.svg") no-repeat center;
-    background-size: contain;
-    filter: brightness(0) invert(1);
-}
-
-.launch-divider {
-    text-align: center;
-    margin: 25px 0;
-    position: relative;
-}
-
-.launch-divider span {
-    font: 14px "Source Sans Pro", sans-serif;
-    color: #888;
-    background: #FFF;
-    padding: 0 15px;
-    position: relative;
-    z-index: 1;
-}
-
-.launch-divider::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
-    max-width: 80%;
-    height: 1px;
-    background: #ddd;
-}
-
-.launch-secondary {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.launch-secondary .area {
-    width: 45vw;
-    height: 35vh;
-    min-height: 200px;
-}
-
-/* Webcam Modal Styles */
 #webcam-modal,
 #webcam-review-modal {
     width: 600px;
