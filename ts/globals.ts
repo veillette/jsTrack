@@ -225,10 +225,14 @@ export const autoTrackModal = new Modal({
 	id: 'auto-track-modal',
 	fields: {
 		algorithm: {
-			label: 'Algorithm (template or optical-flow)',
-			type: 'text',
+			label: 'Algorithm',
+			type: 'select',
 			required: true,
 			initVal: 'template',
+			options: [
+				{ label: 'Template Matching', value: 'template' },
+				{ label: 'Lucas-Kanade Optical Flow', value: 'optical-flow' },
+			],
 		},
 		startFrame: {
 			label: 'Start Frame',
@@ -245,6 +249,12 @@ export const autoTrackModal = new Modal({
 			type: 'number',
 			required: true,
 			initVal: 50,
+		},
+		templateUpdateInterval: {
+			label: 'Template Update Interval (0 = off)',
+			type: 'number',
+			required: true,
+			initVal: 0,
 		},
 	},
 	buttons: {

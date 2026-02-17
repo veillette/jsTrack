@@ -8,6 +8,11 @@
  * any later version.
  */
 
+export interface ModalSelectOption {
+	label: string;
+	value: string;
+}
+
 export interface ModalFieldSchema {
 	label?: string;
 	type: string;
@@ -16,6 +21,7 @@ export interface ModalFieldSchema {
 	defaultValue?: string | number;
 	id?: string;
 	element?: HTMLDivElement;
+	options?: ModalSelectOption[];
 }
 
 export interface ModalButtonSchema {
@@ -185,11 +191,6 @@ export class Modal extends EventEmitter {
 			formItem.classList.add('form-item');
 			formItem.setAttribute('data-key', field);
 			const formInputId = `${this.id}_input-${field}`;
-			const formItemInput = document.createElement('input');
-			formItemInput.type = this.fields[field].type;
-			formItemInput.name = formInputId;
-			formItemInput.id = formInputId;
-			formItemInput.setAttribute('data-key', field);
 			this.fields[field].id = formInputId;
 			this.fields[field].element = formItem;
 
@@ -205,7 +206,34 @@ export class Modal extends EventEmitter {
 					this.fields[field].initVal = '';
 				}
 			}
-			formItemInput.value = String(this.fields[field].initVal);
+
+			let formInputElement: HTMLInputElement | HTMLSelectElement;
+
+			if (this.fields[field].type === 'select' && this.fields[field].options) {
+				const selectEl = document.createElement('select');
+				selectEl.name = formInputId;
+				selectEl.id = formInputId;
+				selectEl.setAttribute('data-key', field);
+				const fieldOptions = this.fields[field].options;
+				if (fieldOptions) {
+					for (const opt of fieldOptions) {
+						const optionEl = document.createElement('option');
+						optionEl.value = opt.value;
+						optionEl.textContent = opt.label;
+						selectEl.appendChild(optionEl);
+					}
+				}
+				formInputElement = selectEl;
+			} else {
+				const inputEl = document.createElement('input');
+				inputEl.type = this.fields[field].type;
+				inputEl.name = formInputId;
+				inputEl.id = formInputId;
+				inputEl.setAttribute('data-key', field);
+				formInputElement = inputEl;
+			}
+
+			formInputElement.value = String(this.fields[field].initVal);
 
 			if (this.fields[field].type !== 'hidden') {
 				const formItemLabel = document.createElement('label');
@@ -214,7 +242,7 @@ export class Modal extends EventEmitter {
 				formItem.appendChild(formItemLabel);
 			}
 
-			formItem.appendChild(formItemInput);
+			formItem.appendChild(formInputElement);
 			this.element.appendChild(formItem);
 		}
 
@@ -269,7 +297,7 @@ export class Modal extends EventEmitter {
 		for (const field in this.fields) {
 			const fieldId = this.fields[field].id;
 			if (!fieldId) return false;
-			const el = document.getElementById(fieldId) as HTMLInputElement | null;
+			const el = document.getElementById(fieldId) as HTMLInputElement | HTMLSelectElement | null;
 			if (el && el.value.length > 0) {
 				exportData[field] = el.value;
 			} else {
@@ -285,7 +313,7 @@ export class Modal extends EventEmitter {
 
 			const fieldId = this.fields[field].id;
 			if (fieldId) {
-				const el = document.getElementById(fieldId) as HTMLInputElement | null;
+				const el = document.getElementById(fieldId) as HTMLInputElement | HTMLSelectElement | null;
 				if (el) el.value = String(this.fields[field].initVal);
 			}
 		}
@@ -318,7 +346,7 @@ export class Modal extends EventEmitter {
 			if (this.fields[field] !== undefined) {
 				const fieldId = this.fields[field].id;
 				if (fieldId) {
-					const el = document.getElementById(fieldId) as HTMLInputElement | null;
+					const el = document.getElementById(fieldId) as HTMLInputElement | HTMLSelectElement | null;
 					if (el) {
 						el.value = value[field];
 					}

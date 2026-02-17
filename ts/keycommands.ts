@@ -4,6 +4,7 @@
  */
 
 import keyboardJS from 'keyboardjs';
+import { initiateAutoTrack } from './autotrack-ui';
 import { ARROW_KEY_STEP_PX } from './constants';
 import { canvas, master, saveProject } from './globals';
 import { drawGraphics } from './index';
@@ -144,4 +145,10 @@ keyboardJS.on(['ctrl+s', 'cmd+s'], (e: KeyboardJSEvent) => {
 	e.preventRepeat();
 	e.preventDefault();
 	saveProject.show();
+});
+
+keyboardJS.on(['ctrl+t', 'cmd+t'], (e: KeyboardJSEvent) => {
+	e.preventRepeat();
+	e.preventDefault();
+	initiateAutoTrack();
 });

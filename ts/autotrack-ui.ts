@@ -4,8 +4,8 @@
  * and orchestrating the tracking engine with the Track/Point system.
  */
 
-import type { Modal, ModalExportData } from './classes/modal';
-import { alertModal, confirmModal } from './classes/modal';
+import type { ModalExportData } from './classes/modal';
+import { alertModal, confirmModal, Modal } from './classes/modal';
 import { Point } from './classes/point';
 import { autoTrackModal, master, stage } from './globals';
 import { loadOpenCV } from './opencv-loader';
@@ -126,10 +126,50 @@ function cleanupROISelection(): void {
 	master.state.default();
 }
 
-// ─── Button click handler ───
+// ─── Re-track from here ───
 
-autoTrackButton?.addEventListener('click', async function (this: HTMLElement) {
-	if (this.classList.contains('disabled')) return;
+let retrackCounter = 0;
+
+/**
+ * Show a dialog offering the user a choice to re-track from the last good
+ * position after tracking was lost.
+ * Returns true if the user wants to re-track, false otherwise.
+ */
+function offerRetrack(message: string): Promise<boolean> {
+	return new Promise((resolve) => {
+		const id = `retrack-modal-${++retrackCounter}`;
+		const modal = new Modal({
+			name: 'Tracking Lost',
+			id,
+			fields: {},
+			buttons: {
+				done: { label: 'Done' },
+				retrack: { label: 'Re-track from here' },
+			},
+			text: [message],
+		});
+		modal.on('done', () => {
+			modal.hide();
+			modal.element?.remove();
+			resolve(false);
+		});
+		modal.on('retrack', () => {
+			modal.hide();
+			modal.element?.remove();
+			resolve(true);
+		});
+		modal.show();
+	});
+}
+
+// ─── Initiate auto-track (shared by button and keyboard shortcut) ───
+
+/**
+ * Initiate the auto-track workflow: validate preconditions, load OpenCV,
+ * then enter ROI selection mode. Can be called from the button or Ctrl+T.
+ */
+export async function initiateAutoTrack(): Promise<void> {
+	if (autoTrackButton?.classList.contains('disabled')) return;
 
 	if (!master.track) {
 		await alertModal('Please create a track first.', 'Auto Track');
@@ -141,7 +181,6 @@ autoTrackButton?.addEventListener('click', async function (this: HTMLElement) {
 		return;
 	}
 
-	// Show loading status while OpenCV loads
 	try {
 		await loadOpenCV();
 	} catch {
@@ -153,6 +192,12 @@ autoTrackButton?.addEventListener('click', async function (this: HTMLElement) {
 	}
 
 	startROISelection();
+}
+
+// ─── Button click handler ───
+
+autoTrackButton?.addEventListener('click', () => {
+	initiateAutoTrack();
 });
 
 // ─── Modal event handlers ───
@@ -167,15 +212,21 @@ autoTrackModal.on('submit', async function (this: Modal, data: ModalExportData) 
 
 	const algorithm = data.algorithm as 'template' | 'optical-flow';
 	if (algorithm !== 'template' && algorithm !== 'optical-flow') {
-		await alertModal('Algorithm must be "template" or "optical-flow".', 'Auto Track');
+		await alertModal('Please select a valid algorithm.', 'Auto Track');
 		return;
 	}
 
-	const startFrame = parseInt(data.startFrame, 10);
-	const endFrame = parseInt(data.endFrame, 10);
-	const searchMargin = parseInt(data.searchMargin, 10);
+	const startFrame = Number.parseInt(data.startFrame, 10);
+	const endFrame = Number.parseInt(data.endFrame, 10);
+	const searchMargin = Number.parseInt(data.searchMargin, 10);
+	const templateUpdateInterval = Number.parseInt(data.templateUpdateInterval, 10);
 
-	if (Number.isNaN(startFrame) || Number.isNaN(endFrame) || Number.isNaN(searchMargin)) {
+	if (
+		Number.isNaN(startFrame) ||
+		Number.isNaN(endFrame) ||
+		Number.isNaN(searchMargin) ||
+		Number.isNaN(templateUpdateInterval)
+	) {
 		await alertModal('Please enter valid numbers for all fields.', 'Auto Track');
 		return;
 	}
@@ -207,6 +258,10 @@ autoTrackModal.on('submit', async function (this: Modal, data: ModalExportData) 
 
 	// Save the original frame position to restore later
 	const originalFrame = master.timeline.currentFrame;
+	// Save original endFrame and ROI dimensions for potential re-track
+	const originalEndFrame = endFrame;
+	const originalROIWidth = currentROI.width;
+	const originalROIHeight = currentROI.height;
 
 	// Create a temporary video element for tracking (avoid disrupting main display)
 	const trackingVideo = document.createElement('video');
@@ -243,6 +298,7 @@ autoTrackModal.on('submit', async function (this: Modal, data: ModalExportData) 
 		endFrame,
 		algorithm,
 		searchMargin,
+		templateUpdateInterval,
 		timeline: master.timeline,
 	};
 
@@ -270,6 +326,8 @@ autoTrackModal.on('submit', async function (this: Modal, data: ModalExportData) 
 	// Run tracking and collect results
 	const results: TrackingResult[] = [];
 	const confidenceThreshold = 0.5;
+	let trackingLostFrame = -1;
+	let lastGoodResult: TrackingResult | null = null;
 
 	try {
 		for await (const item of trackObject(config, abortController.signal)) {
@@ -283,14 +341,12 @@ autoTrackModal.on('submit', async function (this: Modal, data: ModalExportData) 
 			}
 
 			if (item.confidence < confidenceThreshold) {
-				autoTrackModal.setText([
-					`Tracking lost at frame ${item.frameNumber} (confidence: ${Math.round(item.confidence * 100)}%).`,
-					`Points were added for frames ${startFrame + 1} through ${item.frameNumber - 1}.`,
-				]);
+				trackingLostFrame = item.frameNumber;
 				break;
 			}
 
 			results.push(item);
+			lastGoodResult = item;
 		}
 	} catch (err) {
 		if (!aborted) {
@@ -370,8 +426,35 @@ autoTrackModal.on('submit', async function (this: Modal, data: ModalExportData) 
 	autoTrackModal.hide().clear();
 	cleanupROISelection();
 
-	// Show completion message
-	if (results.length > 0 && !aborted) {
+	// Show completion message with re-track option if tracking was lost
+	if (trackingLostFrame > 0 && lastGoodResult && !aborted) {
+		const message =
+			`Tracking lost at frame ${trackingLostFrame}. ` +
+			`${results.length} points were added for frames ${startFrame + 1} through ${lastGoodResult.frameNumber}.`;
+
+		const wantsRetrack = await offerRetrack(message);
+
+		if (wantsRetrack && lastGoodResult.frameNumber < originalEndFrame) {
+			// Build a new ROI centered on the last good tracked position
+			currentROI = {
+				x: lastGoodResult.x - originalROIWidth / 2,
+				y: lastGoodResult.y - originalROIHeight / 2,
+				width: originalROIWidth,
+				height: originalROIHeight,
+			};
+
+			// Seek to the last good frame so the user sees where tracking stopped
+			master.timeline.seek(lastGoodResult.frameNumber);
+			master.timeline.update();
+
+			// Pre-fill the modal to continue from where tracking left off
+			autoTrackModal.push({
+				startFrame: String(lastGoodResult.frameNumber),
+				endFrame: String(originalEndFrame),
+			});
+			autoTrackModal.show();
+		}
+	} else if (results.length > 0 && !aborted) {
 		await alertModal(`Successfully tracked ${results.length} frames.`, 'Auto Track Complete');
 	} else if (aborted) {
 		await alertModal(
