@@ -37,6 +37,7 @@
     "interactjs": "^1.10.27",
     "jszip": "^3.10.1",
     "keyboardjs": "^2.7.0",
+    "marked": "^17.0.2",
     "undo-manager": "^1.1.1",
     "xlsx": "^0.18.5"
   }

@@ -33,7 +33,19 @@ document.getElementById('sidebar-visibility')?.addEventListener('click', functio
 });
 
 document.querySelector('#new-track-button:not(.disabled)')?.addEventListener('click', () => {
+	// Generate default track name: A, B, C, ..., Z, AA, AB, ...
+	const trackCount = Object.keys(master.trackList).length;
+	const getTrackLetter = (n: number): string => {
+		let name = '';
+		let num = n;
+		do {
+			name = String.fromCharCode(65 + (num % 26)) + name;
+			num = Math.floor(num / 26) - 1;
+		} while (num >= 0);
+		return name;
+	};
 	newTrack.push({
+		name: getTrackLetter(trackCount),
 		color: newTrack.defaultColors[Math.floor(Math.random() * newTrack.defaultColors.length)],
 	});
 	newTrack.show();
@@ -70,16 +82,22 @@ document.querySelector('#redo-button:not(.disabled)')?.addEventListener('click',
 });
 
 document.getElementById('export-button')?.addEventListener('click', function (this: HTMLElement) {
-	if (!this.classList.contains('disabled')) exportData.show();
+	if (!this.classList.contains('disabled')) {
+		const defaultFilename = master.name.toLowerCase().replace(/\s+/g, '_');
+		exportData.push({ filename: defaultFilename });
+		exportData.show();
+	}
 });
 
 document.querySelector('#save-button:not(.disabled)')?.addEventListener('click', () => {
+	const defaultFilename = master.name.toLowerCase().replace(/\s+/g, '_');
+	saveProject.push({ filename: defaultFilename });
 	saveProject.show();
 });
 
 document.querySelectorAll('.help-button:not(.disabled)').forEach((el) => {
 	el.addEventListener('click', () => {
-		window.open('instructions.md', '_blank');
+		window.open('help.html', '_blank');
 	});
 });
 

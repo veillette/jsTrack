@@ -384,7 +384,8 @@ export class Scale {
 	 */
 	convert(pixels: number, targetUnit: PhysicsUnit = unit(this.unit())): { number: number } {
 		const scaled = multiply(pixels, divide(this.size, this.length) as number);
-		const converted = unit(String(scaled)).to(targetUnit.toString());
-		return { number: converted.toNumber(targetUnit.toString()) };
+		const targetUnitName = targetUnit.units[0].unit.name;
+		const converted = unit(String(scaled)).to(targetUnitName);
+		return { number: converted.toNumber(targetUnitName) };
 	}
 }

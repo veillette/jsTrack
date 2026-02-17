@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trackTS Help</title>
+    <link rel="icon" href="icons/favicon/favicon.ico">
+        <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --heading-color: #0066cc;
+            --link-color: #0077bb;
+            --code-bg: #f4f4f4;
+            --blockquote-border: #0066cc;
+            --blockquote-bg: rgba(0, 102, 204, 0.05);
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: #f8f9fa;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--heading-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--heading-color);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        header a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        header a:hover {
+            text-decoration: underline;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        #content {
+            padding-bottom: 4rem;
+        }
+
+        #content h1 {
+            color: var(--heading-color);
+            border-bottom: 2px solid var(--heading-color);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        #content h2 {
+            color: var(--heading-color);
+            margin-top: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        #content h3 {
+            color: #005599;
+            margin-top: 1.5rem;
+        }
+
+        #content h4 {
+            color: #444444;
+            margin-top: 1.2rem;
+        }
+
+        #content a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        #content a:hover {
+            text-decoration: underline;
+        }
+
+        #content img {
+            vertical-align: middle;
+            margin: 0 0.25rem;
+            height: 1.2em;
+            width: auto;
+        }
+
+        #content code {
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+
+        #content pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        #content pre code {
+            padding: 0;
+            background: none;
+            color: var(--text-color);
+        }
+
+        #content blockquote {
+            border-left: 4px solid var(--blockquote-border);
+            background-color: var(--blockquote-bg);
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        #content blockquote p {
+            margin: 0;
+        }
+
+        #content ul, #content ol {
+            padding-left: 1.5rem;
+        }
+
+        #content li {
+            margin: 0.5rem 0;
+        }
+
+        #content p {
+            margin: 1rem 0;
+        }
+
+        #content strong {
+            color: #111111;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #888;
+        }
+
+        .loading::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>
+                <img src="icons/favicon/favicon-32x32.png" alt="trackTS" width="32" height="32">
+                trackTS Help
+            </h1>
+            <a href="index.html">&larr; Back to App</a>
+        </div>
+    </header>
+    <div class="container">
+        <div id="content">
+            <p class="loading">Loading documentation</p>
+        </div>
+    </div>
+    <script type="module" src="dist/help.iife.js"></script>
+</body>
+</html>
