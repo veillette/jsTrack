@@ -171,8 +171,8 @@ master.on('change', function (this: typeof master) {
 
 const backupRaw = getStorage('backup');
 if (backupRaw) {
-	const launchEl = document.getElementById('launch');
-	if (launchEl?.classList.contains('active')) {
+	const overlayEl = document.getElementById('video-overlay');
+	if (overlayEl && !overlayEl.classList.contains('hidden')) {
 		(async () => {
 			const backupInfo: BackupInfo = JSON.parse(backupRaw);
 			const dateStr = backupInfo.date || new Date().toString();

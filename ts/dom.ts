@@ -103,6 +103,8 @@ window.addEventListener('resize', () => {
 // ─── File drop area ───
 
 const dropArea = document.getElementById('file-drop-area');
+const videoOverlay = document.getElementById('video-overlay');
+
 if (dropArea) {
 	['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
 		dropArea.addEventListener(
@@ -155,6 +157,42 @@ if (dropArea) {
 		},
 		false,
 	);
+
+	// Also highlight drop area when dragging over the entire video overlay
+	if (videoOverlay) {
+		['dragenter', 'dragover'].forEach((eventName) => {
+			videoOverlay.addEventListener(
+				eventName,
+				(e) => {
+					e.preventDefault();
+					dropArea.classList.add('highlight');
+				},
+				false,
+			);
+		});
+		['dragleave', 'drop'].forEach((eventName) => {
+			videoOverlay.addEventListener(
+				eventName,
+				(e) => {
+					e.preventDefault();
+					dropArea.classList.remove('highlight');
+				},
+				false,
+			);
+		});
+		videoOverlay.addEventListener(
+			'drop',
+			(e: DragEvent) => {
+				e.preventDefault();
+				showLoader();
+				const dt = e.dataTransfer;
+				if (dt) {
+					handleFiles(dt.files);
+				}
+			},
+			false,
+		);
+	}
 }
 
 const fileInput = document.getElementById('file-input') as HTMLInputElement | null;

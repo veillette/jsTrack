@@ -17,7 +17,7 @@ let recordedBlob: Blob | null = null;
 
 // ─── DOM Elements ───
 
-const launchModal = document.getElementById('launch') as HTMLDivElement;
+const modalContainer = document.getElementById('modal-container') as HTMLDivElement;
 const webcamButton = document.getElementById('webcam-record-button') as HTMLButtonElement;
 const cameraSelect = document.getElementById('camera-select') as HTMLSelectElement;
 const previewVideo = document.getElementById('webcam-preview') as HTMLVideoElement;
@@ -45,6 +45,7 @@ function showModal(modal: HTMLDivElement): void {
 	for (const m of document.querySelectorAll('.modal.active')) {
 		m.classList.remove('active');
 	}
+	modalContainer.classList.add('active');
 	modal.classList.add('active');
 }
 
@@ -52,7 +53,7 @@ function hideAllModals(): void {
 	for (const m of document.querySelectorAll('.modal.active')) {
 		m.classList.remove('active');
 	}
-	launchModal.classList.add('active');
+	modalContainer.classList.remove('active');
 }
 
 function setStatus(message: string, isError = false): void {
@@ -241,6 +242,7 @@ async function useRecordedVideo(): Promise<void> {
 
 			hideLoader();
 			webcamModal.classList.remove('active');
+			modalContainer.classList.remove('active');
 			hideLaunchModal();
 			newProject.push({ name: generateProjectName(), framerate: String(framerate) }).show();
 		});

@@ -22,10 +22,35 @@
                 <div id="main-container">
                     <canvas id="main"></canvas>
                 </div>
+                <div id="video-overlay">
+                    <div class="video-overlay-content">
+                        <img src="info/logo.png" alt="trackTS Logo" class="overlay-logo">
+                        <div class="overlay-section">
+                            <button id="webcam-record-button" class="primary-action">
+                                <span class="webcam-icon"></span>
+                                Record from Webcam
+                            </button>
+                        </div>
+                        <div class="overlay-divider">
+                            <span>or load an existing video</span>
+                        </div>
+                        <div id="file-drop-area" class="overlay-drop-area">
+                            <div class="area-content">
+                                <div class="text">Drag a video or .trackTS file here, or</div>
+                                <div class="overlay-buttons">
+                                    <label for="file-input" class="button">Select Local File</label>
+                                    <button id="pick" disabled=true>Select From Drive</button>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="file" id="file-input" accept=".trackTS,.mp4,.m4v,.webm">
+                        <a id="info-link" href="info" class="overlay-info-link">What is trackTS?</a>
+                    </div>
+                </div>
             </div>
             <canvas id="scrubber"></canvas>
-            <div id="sidebar-visibility" class="show"></div>
-            <div id="sidebar" class="hidden">
+            <div id="sidebar-visibility" class="hide"></div>
+            <div id="sidebar" class="normal">
                 <div id="toolbox" class="sidebar-item">
                     <div class="handle-bar">
                         <div class="handle"></div>
@@ -63,38 +88,7 @@
                     <div id="table"></div>
                 </div>
             </div>
-            <div id="modal-container" class="active launch">
-                <div id="launch" class="modal active">
-					<img src="info/logo.png" alt="trackTS Logo" id="modal-logo">
-
-                    <!-- PRIMARY: Webcam Recording -->
-                    <div class="launch-primary">
-                        <button id="webcam-record-button" class="primary-action">
-                            <span class="webcam-icon"></span>
-                            Record from Webcam
-                        </button>
-                    </div>
-
-                    <div class="launch-divider">
-                        <span>or load an existing video</span>
-                    </div>
-
-                    <!-- SECONDARY: File Loading -->
-                    <div id="file-input-container" class="launch-secondary">
-                        <div class="area" id="file-drop-area">
-                            <div class="area-content">
-                                <div class="text">Drag a video or .trackTS file here, or</div>
-                                <div class="launch-buttons">
-                                    <label for="file-input" class="button">Select Local File</label>
-                                    <button id="pick" disabled=true>Select From Drive</button>
-                                </div>
-                                <a id="info-link" href="info">What is trackTS?</a>
-                            </div>
-                        </div>
-                        <input type="file" id="file-input" accept=".trackTS,.mp4,.m4v,.webm">
-                    </div>
-                </div>
-
+            <div id="modal-container">
                 <!-- Webcam Recording Modal -->
                 <div id="webcam-modal" class="modal">
                     <div class="modal-title">Record from Webcam</div>

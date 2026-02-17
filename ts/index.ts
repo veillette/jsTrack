@@ -52,6 +52,16 @@ export function drawGraphics(_initialDraw = false): void {
 	videoContainer.style.width = `${width}px`;
 	videoContainer.style.height = `${height}px`;
 
+	if (master.timeline.video.videoWidth === 0 || master.timeline.video.videoHeight === 0) {
+		canvas.height = height;
+		canvas.width = width;
+		scrubberCanv.width = canvas.width;
+		scrubberCanv.height = 50;
+		stage.update();
+		scrubber.update();
+		return;
+	}
+
 	const scale = Math.min(width / master.timeline.video.videoWidth, height / master.timeline.video.videoHeight);
 
 	canvas.height = height;

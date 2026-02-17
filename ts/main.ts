@@ -52,3 +52,8 @@ import './dom';
 
 // 15. Google Drive integration
 import './drive';
+
+// 16. Initial layout — sidebar is visible from start, so size the canvas/scrubber
+import { drawGraphics } from './index';
+
+drawGraphics();

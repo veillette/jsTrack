@@ -45,13 +45,8 @@ export async function loadProject(file: File, callback: (() => void) | null = nu
 }
 
 export function hideLaunchModal(): void {
-	const container = document.getElementById('modal-container');
-	if (container) {
-		container.classList.remove('active');
-		container.classList.remove('launch');
-	}
-	const launch = document.getElementById('launch');
-	if (launch) launch.classList.remove('active');
+	const overlay = document.getElementById('video-overlay');
+	if (overlay) overlay.classList.add('hidden');
 
 	const helpFab = document.getElementById('help-fab');
 	if (helpFab) helpFab.remove();
