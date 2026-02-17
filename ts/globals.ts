@@ -220,5 +220,38 @@ export const editTrack = new Modal({
 	buttons: { cancel: { label: 'Cancel' }, submit: { label: 'Save' } },
 });
 
+export const autoTrackModal = new Modal({
+	name: 'Auto Track',
+	id: 'auto-track-modal',
+	fields: {
+		algorithm: {
+			label: 'Algorithm (template or optical-flow)',
+			type: 'text',
+			required: true,
+			initVal: 'template',
+		},
+		startFrame: {
+			label: 'Start Frame',
+			type: 'number',
+			required: true,
+		},
+		endFrame: {
+			label: 'End Frame',
+			type: 'number',
+			required: true,
+		},
+		searchMargin: {
+			label: 'Search Region Margin (px)',
+			type: 'number',
+			required: true,
+			initVal: 50,
+		},
+	},
+	buttons: {
+		cancel: { label: 'Cancel' },
+		submit: { label: 'Track' },
+	},
+});
+
 // Wire up Track dblclick → editTrack modal (avoids circular imports)
 master.onEditTrack = (data) => editTrack.push(data).show();

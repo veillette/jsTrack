@@ -32,6 +32,9 @@ import './modalevents';
 // 9b. Webcam recording modal handlers
 import './webcamevents';
 
+// 9c. Auto-tracking (OpenCV) handlers
+import './autotrack-ui';
+
 // 10. Keyboard shortcuts
 import './keycommands';
 
